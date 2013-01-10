@@ -55,13 +55,10 @@ return best_model, best_consensus_set, best_error
 */
   
     public RANSACResult execute(){
-        ArrayList<Point> maybeInliers = null;
-        Circle maybeCircle = null;
-
-        // maybe_inliers := n randomly selected values from data
-        // maybe_model := model parameters fitted to maybe_inliers
-        // consensus_set := maybe_inliers
-
+        ArrayList<Integer> maybeInliers = null;
+        ArrayList<Point> consensusSet   = null;
+        Circle maybeCircle              = null;
+        
         // while iterations < k
         for (int i = 0; i < this.maxIter; i++) {
             // maybe_inliers := n randomly selected values from data
@@ -69,12 +66,37 @@ return best_model, best_consensus_set, best_error
 
             // maybe_model := model parameters fitted to maybe_inliers
             maybeCircle = this.getCircle(maybeInliers);
+
+            for (int j = 0; j < this.data.size(); j++) {
+                if(maybeInliers.contains(j)){ continue; }
+
+                Point point = this.data.get(j);
+
+                double a = point.getX();
+                double b = point.getY();
+                double x = maybeCircle.getX();
+                double y = maybeCircle.getY();
+
+                double hyp = Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2));
+                double offset = Math.abs(maybeCircle.getRadius() - hyp);
+
+                if(offset < this.threshold){
+                    // consensus_set := maybe_inliers
+                    consensusSet.add(point);
+                }
+            }
         }
 
         return null;
     }
 
-    private Circle getCircle(ArrayList<Point> workingPoints){
+    private Circle getCircle(ArrayList<Integer> workingIndexes){
+        ArrayList<Point> workingPoints = null;
+
+        for(int index : workingIndexes) {
+            workingPoints.add(this.data.get(index));
+        }
+
         double a = workingPoints.get(0).getX();
         double b = workingPoints.get(0).getY();
 
@@ -91,7 +113,7 @@ return best_model, best_consensus_set, best_error
         return new Circle(k, h, r);
     }
     
-    private ArrayList<Point> getNPoints(){
+    private ArrayList<Integer> getNPoints(){
         ArrayList<Integer> collectedNumbers = null;
         ArrayList<Point> result             = null;
         Random random                       = new Random();
@@ -106,11 +128,7 @@ return best_model, best_consensus_set, best_error
             }
         }
 
-        for (int i = 0; i < collectedNumbers.size(); i++) {
-            result.add(data.get(collectedNumbers.get(i)));
-        }
-
-        return result;
+        return collectedNumbers;
     }
   
   private class RANSACResult {
