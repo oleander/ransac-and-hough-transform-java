@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move 3 elements to &apos;GeographicalPR/src&apos;&#x0D;&#x0A;- Original project: &apos;GeographicalPR&apos;&#x0D;&#x0A;- Destination element: &apos;GeographicalPR/src&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     HoughTransform.java&#x0D;&#x0A;     README.md&#x0D;&#x0A;     RANSAC.java&#x0D;&#x0A;- Update references to refactored element" description="Move files" destination="/src" element1="HoughTransform.java" element2="README.md" element3="RANSAC.java" files="3" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1357829756770" units="0" version="1.0"/>
+</session>
