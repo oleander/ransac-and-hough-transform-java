@@ -1,4 +1,5 @@
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.*;
@@ -44,8 +45,8 @@ public class RANSAC {
         if(args.length == 0){
             throw new IllegalArgumentException();
         }
-
-        RANSAC ransac = new RANSAC(args[0]); 
+        
+        RANSAC ransac = new RANSAC(args[0]);
         RANSACResult r = ransac.execute();
         System.out.println(r.getCircle());
         ransac.showCanvas(r.getCircle());
@@ -60,10 +61,13 @@ public class RANSAC {
                     g.drawOval((int)point.getX(),(int) point.getY(), 1, 1);
                 }
                 
+                g.setColor(Color.RED);
                 g.drawOval((int)(c.getX() - c.getRadius()),
                     (int) (c.getY() - c.getRadius()),(int) c.getRadius(), (int) c.getRadius());
             }
         });
+        frame.setSize(300, 400);
+        frame.setVisible(true);
     }
   
     public RANSACResult execute() throws IllegalArgumentException {
