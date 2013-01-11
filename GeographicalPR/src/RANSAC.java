@@ -116,8 +116,8 @@ public class RANSAC {
     }
     
     private ArrayList<Integer> getNPoints(){
-        ArrayList<Integer> collectedNumbers = null;
-        ArrayList<Point> result             = null;
+        ArrayList<Integer> collectedNumbers = new ArrayList<Integer>();
+        ArrayList<Point> result             = new ArrayList<Point>();
         Random random                       = new Random();
 
         for (int n = 0; n < this.sampleSize; n++) {
