@@ -45,18 +45,15 @@ public class RANSAC {
             throw new IllegalArgumentException();
         }
 
-        RANSACResult r = new RANSAC(args[0]).execute();
+        RANSAC ransac = new RANSAC(args[0]); 
+        RANSACResult r = ransac.execute();
         System.out.println(r.getCircle());
-
+        ransac.showCanvas(r.getCircle());
     }
     
     public void showCanvas(final Circle c){
-        
         JFrame frame = new JFrame();
         frame.add(new Canvas(){
-            
-            
-            
             @Override
             public void paint(Graphics g){
                 for(Point point : data){
@@ -64,10 +61,8 @@ public class RANSAC {
                 }
                 
                 g.drawOval((int)(c.getX() - c.getRadius()),
-                        (int) (c.getY() - c.getRadius()),(int) c.getRadius(), (int) c.getRadius());
+                    (int) (c.getY() - c.getRadius()),(int) c.getRadius(), (int) c.getRadius());
             }
-            
-            
         });
     }
   
