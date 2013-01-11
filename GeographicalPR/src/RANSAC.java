@@ -1,15 +1,49 @@
 import java.awt.Point;
 import java.util.Set;
 import java.util.*;
+import java.io.*;
+import java.awt.Point;
+import java.lang.IllegalArgumentException;
 
 public class RANSAC {
-    private ArrayList<Point> data;
-    private int[] model;
-    private int sampleSize = 3;
-    private int maxIter;
-    private int threshold;
+    private ArrayList<Point> data = new ArrayList<Point>();;
+    private int sampleSize     = 3;
+    private int maxIter        = 10;
+    private int threshold      = 3;
     private int sufficientSize = 3;
-    public static void main(String[] args) { }
+
+    /**
+        @filePath Path to file containing points      
+    */
+    public RANSAC(String filePath) {
+        Scanner sc = null;
+
+        try {
+            sc = new Scanner(new File(filePath));
+        } catch(FileNotFoundException e) { }
+
+        if(sc == null) {
+            System.out.println("Something went wrong!");
+        } else {
+            while(sc.hasNext()){
+                String[] points = sc.next().split(",");
+                int x = Integer.parseInt(points[0]);
+                int y = Integer.parseInt(points[1]);
+                this.data.add(new Point(x, y));
+            }
+        }
+    }
+
+    /**
+        @args[0] Path to file containing points      
+    */
+    public static void main(String[] args) throws IllegalArgumentException { 
+        if(args.length == 0){
+            throw new IllegalArgumentException();
+        }
+
+        new RANSAC(args[0]).execute();
+    }
   
     public RANSACResult execute(){
         ArrayList<Integer> maybeInliers   = null;
@@ -99,7 +133,7 @@ public class RANSAC {
         return collectedNumbers;
     }
   
-  private class RANSACResult {
+    private class RANSACResult {
       private Circle circle;
       private ArrayList<Point> consensusSet;
 
@@ -115,29 +149,29 @@ public class RANSAC {
       public ArrayList<Point> getConsensusSet(){
         return this.consensusSet;
       }
-  }
-
-  private class Circle {
-    private double x;
-    private double y;
-    private double radius;
-
-    public Circle(double x, double y, double radius){
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
     }
 
-    public double getX(){
-        return x;
-    }
+    private class Circle {
+        private double x;
+        private double y;
+        private double radius;
 
-    public double getY(){
-        return y;
-    }
+        public Circle(double x, double y, double radius){
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+        }
 
-    public double getRadius(){
-        return radius;
+        public double getX(){
+            return x;
+        }
+
+        public double getY(){
+            return y;
+        }
+
+        public double getRadius(){
+            return radius;
+        }
     }
-  }
 }
