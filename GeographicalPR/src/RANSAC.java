@@ -1,9 +1,12 @@
+import java.awt.Canvas;
+import java.awt.Graphics;
 import java.awt.Point;
-import java.util.Set;
 import java.util.*;
 import java.io.*;
 import java.awt.Point;
 import java.lang.IllegalArgumentException;
+
+import javax.swing.JFrame;
 
 public class RANSAC {
     private ArrayList<Point> data = new ArrayList<Point>();;
@@ -46,6 +49,27 @@ public class RANSAC {
         System.out.println(r.getCircle());
 
     }
+    
+    public void showCanvas(final Circle c){
+        
+        JFrame frame = new JFrame();
+        frame.add(new Canvas(){
+            
+            
+            
+            @Override
+            public void paint(Graphics g){
+                for(Point point : data){
+                    g.drawOval((int)point.getX(),(int) point.getY(), 1, 1);
+                }
+                
+                g.drawOval((int)(c.getX() - c.getRadius()),
+                        (int) (c.getY() - c.getRadius()),(int) c.getRadius(), (int) c.getRadius());
+            }
+            
+            
+        });
+    }
   
     public RANSACResult execute(){
         ArrayList<Integer> maybeInliers   = new ArrayList<Integer>();
@@ -82,6 +106,8 @@ public class RANSAC {
                     if(consensusSet.size() > this.sufficientSize) { break; }
                 }
             }
+            
+            
 
             if(consensusSet.size() > bestConsensusSet.size()){
                 bestConsensusSet = consensusSet;
@@ -90,7 +116,8 @@ public class RANSAC {
 
             if(consensusSet.size() > this.sufficientSize) { break; }
         }
-
+        
+        
         return new RANSACResult(bestConsensusSet, bestCircle);
     }
 
