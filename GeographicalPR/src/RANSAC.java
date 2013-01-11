@@ -8,8 +8,8 @@ import java.lang.IllegalArgumentException;
 public class RANSAC {
     private ArrayList<Point> data = new ArrayList<Point>();;
     private int sampleSize     = 3;
-    private int maxIter        = 10000;
-    private int threshold      = 3;
+    private int maxIter        = 1000;
+    private int threshold      = 2;
     private int sufficientSize = 300;
 
     /**
@@ -47,7 +47,11 @@ public class RANSAC {
 
     }
   
-    public RANSACResult execute(){
+    public RANSACResult execute() throws IllegalArgumentException {
+        if(this.data.size() == 0){
+            throw new IllegalArgumentException("File containing points is empty");
+        }
+
         ArrayList<Integer> maybeInliers   = new ArrayList<Integer>();
         ArrayList<Point> consensusSet     = new ArrayList<Point>();
         ArrayList<Point> bestConsensusSet = new ArrayList<Point>();
