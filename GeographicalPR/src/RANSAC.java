@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 public class RANSAC {
     private ArrayList<Point> data = new ArrayList<Point>();;
     private int sampleSize     = 3;
-    private int maxIter        = 3000;
+    private int maxIter        = 100000;
     private int threshold      = 2;
     private int sufficientSize = (int) Double.POSITIVE_INFINITY;
     private final int width = 800;
@@ -116,17 +116,18 @@ public class RANSAC {
                 double y = maybeCircle.getY();
 
                 double hyp = Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2));
+                // System.out.println(hyp);
                 double offset = Math.abs(maybeCircle.getRadius() - hyp);
 
                 if(offset < this.threshold){
+                    // System.out.println(offset);
                     // consensus_set := maybe_inliers
                     consensusSet.add(point);
+                    // System.out.println(point.getX() + "," + point.getY());
                     
                     if(consensusSet.size() > this.sufficientSize) { break; }
                 }
             }
-            
-            
 
             if(consensusSet.size() > bestConsensusSet.size()){
                 bestConsensusSet = consensusSet;
