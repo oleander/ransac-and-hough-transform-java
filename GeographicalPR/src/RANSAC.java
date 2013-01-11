@@ -42,13 +42,15 @@ public class RANSAC {
             throw new IllegalArgumentException();
         }
 
-        new RANSAC(args[0]).execute();
+        RANSACResult r = new RANSAC(args[0]).execute();
+        System.out.println(r.getCircle());
+
     }
   
     public RANSACResult execute(){
-        ArrayList<Integer> maybeInliers   = null;
-        ArrayList<Point> consensusSet     = null;
-        ArrayList<Point> bestConsensusSet = null;
+        ArrayList<Integer> maybeInliers   = new ArrayList<Integer>();
+        ArrayList<Point> consensusSet     = new ArrayList<Point>();
+        ArrayList<Point> bestConsensusSet = new ArrayList<Point>();
         Circle bestCircle                 = null;
         Circle maybeCircle                = null;
 
@@ -93,7 +95,7 @@ public class RANSAC {
     }
 
     private Circle getCircle(ArrayList<Integer> workingIndexes){
-        ArrayList<Point> workingPoints = null;
+        ArrayList<Point> workingPoints = new ArrayList<Point>();
 
         for(int index : workingIndexes) {
             workingPoints.add(this.data.get(index));
@@ -172,6 +174,11 @@ public class RANSAC {
 
         public double getRadius(){
             return radius;
+        }
+
+        @Override
+        public String toString(){
+            return "X : " + x + ", Y: " + y + ", Radius: " + radius;
         }
     }
 }
