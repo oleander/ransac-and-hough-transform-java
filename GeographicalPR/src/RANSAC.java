@@ -8,9 +8,9 @@ import java.lang.IllegalArgumentException;
 public class RANSAC {
     private ArrayList<Point> data = new ArrayList<Point>();;
     private int sampleSize     = 3;
-    private int maxIter        = 10;
+    private int maxIter        = 10000;
     private int threshold      = 3;
-    private int sufficientSize = 3;
+    private int sufficientSize = 300;
 
     /**
         @filePath Path to file containing points      
@@ -110,8 +110,8 @@ public class RANSAC {
         double e = workingPoints.get(2).getX();
         double f = workingPoints.get(2).getY();
 
-        double k = (1/2) * (( a * a + b * b)*(e - c) + (c * c + d * d) * (a - e) + (e * e + f * f) * (c - a)) / (b * (e - c) + d * (a - e) + f * (c - a));
-        double h = (1/2) * ((a * a + b * b) * (f - d) + (c * c + d * d) * (b - f) + (e * e + f * f) * (d - b)) / (a * (f - d) + c * (b - f) + e * (d - b)); 
+        double k = 0.5 * ((a * a + b * b) * (e - c) + (c * c + d * d) * (a - e) + (e * e + f * f) * (c - a)) / (b * (e - c) + d * (a - e) + f * (c - a));
+        double h = 0.5 * ((a * a + b * b) * (f - d) + (c * c + d * d) * (b - f) + (e * e + f * f) * (d - b)) / (a * (f - d) + c * (b - f) + e * (d - b)); 
         double r = Math.sqrt(Math.pow(a - h, 2) + Math.pow(b - k, 2));
 
         return new Circle(k, h, r);
