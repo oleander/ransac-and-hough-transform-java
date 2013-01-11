@@ -12,9 +12,12 @@ import javax.swing.JFrame;
 public class RANSAC {
     private ArrayList<Point> data = new ArrayList<Point>();;
     private int sampleSize     = 3;
-    private int maxIter        = 1000;
+    private int maxIter        = 3000;
     private int threshold      = 2;
-    private int sufficientSize = 300;
+    private int sufficientSize = (int) Double.POSITIVE_INFINITY;
+    private final int width = 800;
+    private final int height = 800;
+    private final int pointSize = 2;
 
     /**
         @filePath Path to file containing points      
@@ -54,19 +57,32 @@ public class RANSAC {
     
     public void showCanvas(final Circle c){
         JFrame frame = new JFrame();
+        final int width = this.width;
+        final int height = this.height;
+        final int pointSize = this.pointSize;
+
         frame.add(new Canvas(){
             @Override
             public void paint(Graphics g){
                 for(Point point : data){
-                    g.drawOval((int)point.getX(),(int) point.getY(), 1, 1);
+                    g.drawOval(
+                        (int) (point.getX() + width / 2.0 - pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + height / 2.0 - pointSize / 2.0 + 0.5), 
+                        pointSize, 
+                        pointSize
+                    );
                 }
                 
                 g.setColor(Color.RED);
-                g.drawOval((int)(c.getX() - c.getRadius()),
-                    (int) (c.getY() - c.getRadius()),(int) c.getRadius(), (int) c.getRadius());
+                g.drawOval(
+                    (int) (c.getX() - c.getRadius() + width / 2.0 + 0.5),
+                    (int) (c.getY() - c.getRadius() + height / 2.0 + 0.5),
+                    (int) (2 * c.getRadius()), 
+                    (int) (2 * c.getRadius())
+                );
             }
         });
-        frame.setSize(300, 400);
+        frame.setSize(width, height);
         frame.setVisible(true);
     }
   
@@ -144,7 +160,7 @@ public class RANSAC {
         double h = 0.5 * ((a * a + b * b) * (f - d) + (c * c + d * d) * (b - f) + (e * e + f * f) * (d - b)) / (a * (f - d) + c * (b - f) + e * (d - b)); 
         double r = Math.sqrt(Math.pow(a - h, 2) + Math.pow(b - k, 2));
 
-        return new Circle(k, h, r);
+        return new Circle(h, k, r);
     }
     
     private ArrayList<Integer> getNPoints(){
