@@ -1,25 +1,25 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.MyPoint;
+import java.awt.Point;
 import java.util.*;
 import java.io.*;
-import java.awt.MyPoint;
+import java.awt.Point;
 import java.lang.IllegalArgumentException;
 
 import javax.swing.JFrame;
 
 public class RANSAC {
-    private ArrayList<MyPoint> data = new ArrayList<MyPoint>();;
+    private ArrayList<Point> data = new ArrayList<Point>();;
     private final int maxIter        = 100000;
     private final int threshold      = 10;
     private final int sufficientSize = (int) Double.POSITIVE_INFINITY;
     private final int width = 1000;
     private final int height = 1000;
-    private final int MyPointSize = 4;
+    private final int pointSize = 4;
 
     /**
-        @filePath Path to file containing MyPoints      
+        @filePath Path to file containing points      
     */
     public RANSAC(String filePath) {
         Scanner sc = null;
@@ -32,16 +32,16 @@ public class RANSAC {
             System.out.println("Something went wrong!");
         } else {
             while(sc.hasNext()){
-                String[] MyPoints = sc.next().split(",");
-                int x = Integer.parseInt(MyPoints[0]);
-                int y = Integer.parseInt(MyPoints[1]);
-                this.data.add(new MyPoint(x, y));
+                String[] points = sc.next().split(",");
+                int x = Integer.parseInt(points[0]);
+                int y = Integer.parseInt(points[1]);
+                this.data.add(new Point(x, y));
             }
         }
     }
 
     /**
-        @args[0] Path to file containing MyPoints      
+        @args[0] Path to file containing points      
     */
     public static void main(String[] args) throws IllegalArgumentException { 
         if(args.length == 0){
@@ -56,11 +56,11 @@ public class RANSAC {
     
     public void showCanvas(final RANSACResult r){
         final Circle c = r.getCircle();
-        final ArrayList<MyPoint> cs = r.getConsensusSet();
+        final ArrayList<Point> cs = r.getConsensusSet();
         JFrame frame = new JFrame();
         final int width = this.width;
         final int height = this.height;
-        final int MyPointSize = this.MyPointSize;
+        final int pointSize = this.pointSize;
         final double offsetWidth = width / 2.0 - 100.0;
         final double offsetHeight = height / 2.0 - 300.0;
 
@@ -68,12 +68,12 @@ public class RANSAC {
             @Override
             public void paint(Graphics g){
                 g.setColor(Color.BLACK);
-                for(MyPoint MyPoint : data){
+                for(Point point : data){
                     g.drawOval(
-                        (int) (MyPoint.getX() + offsetWidth - MyPointSize / 2.0 + 0.5),
-                        (int) (MyPoint.getY() + offsetHeight - MyPointSize / 2.0 + 0.5), 
-                        MyPointSize, 
-                        MyPointSize
+                        (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5), 
+                        pointSize, 
+                        pointSize
                     );
                 }
                 
@@ -86,12 +86,12 @@ public class RANSAC {
                 );
 
                 g.setColor(Color.GREEN);
-                for(MyPoint MyPoint : cs) {
+                for(Point point : cs) {
                     g.fillOval(
-                        (int) (MyPoint.getX() + offsetWidth - MyPointSize / 2.0 + 0.5),
-                        (int) (MyPoint.getY() + offsetHeight - MyPointSize / 2.0 + 0.5), 
-                        MyPointSize, 
-                        MyPointSize
+                        (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5), 
+                        pointSize, 
+                        pointSize
                     );
                 }
             }
@@ -102,21 +102,21 @@ public class RANSAC {
   
     public RANSACResult execute() throws IllegalArgumentException {
         if(this.data.size() == 0){
-            throw new IllegalArgumentException("File containing MyPoints is empty");
+            throw new IllegalArgumentException("File containing points is empty");
         }
 
         ArrayList<Integer> maybeInliers   = new ArrayList<Integer>();
-        ArrayList<MyPoint> bestConsensusSet = new ArrayList<MyPoint>();;
-        ArrayList<MyPoint> consensusSet     = null;
+        ArrayList<Point> bestConsensusSet = new ArrayList<Point>();;
+        ArrayList<Point> consensusSet     = null;
         Circle bestCircle                 = null;
         Circle maybeCircle                = null;
 
         // while iterations < k
         for (int i = 0; i < this.maxIter; i++) {
-            consensusSet = new ArrayList<MyPoint>();
+            consensusSet = new ArrayList<Point>();
 
             // maybe_inliers := n randomly selected values from data
-            maybeInliers = this.getNMyPoints();
+            maybeInliers = this.getNPoints();
 
             // maybe_model := model parameters fitted to maybe_inliers
             maybeCircle = this.getCircle(maybeInliers);
@@ -124,10 +124,10 @@ public class RANSAC {
             for (int j = 0; j < this.data.size(); j++) {
                 if(maybeInliers.contains(j)){ continue; }
 
-                MyPoint MyPoint = this.data.get(j);
+                Point point = this.data.get(j);
 
-                double a = MyPoint.getX();
-                double b = MyPoint.getY();
+                double a = point.getX();
+                double b = point.getY();
                 double x = maybeCircle.getX();
                 double y = maybeCircle.getY();
 
@@ -137,12 +137,12 @@ public class RANSAC {
                 if(offset < this.threshold){
                     // System.out.println(offset);
                     // consensus_set := maybe_inliers
-                    consensusSet.add(MyPoint);
-                    // System.out.println(MyPoint.getX() + "," + MyPoint.getY());
+                    consensusSet.add(point);
+                    // System.out.println(point.getX() + "," + point.getY());
                     
                     if(consensusSet.size() > this.sufficientSize) { break; }
                 } else {
-                    MyPoint.addOffset(offset);
+                    point.addOffset(offset);
                     // System.out.println("A:" + a + ", B: " + b + ", H: " + hyp + ", O: " + offset + ", X " + x + ", Y " + y);
                 }
             }
@@ -159,9 +159,9 @@ public class RANSAC {
             if(consensusSet.size() > this.sufficientSize) { break; }
         }
         
-        for (MyPoint MyPoint : this.data) {
-            if(bestConsensusSet.contains(MyPoint)) { continue; }
-            System.out.println(MyPoint.getX() + "," + MyPoint.getY() + "OFFSET: " + MyPoint.getOffset());
+        for (Point point : this.data) {
+            if(bestConsensusSet.contains(point)) { continue; }
+            System.out.println(point.getX() + "," + point.getY() + "OFFSET: " + point.getOffset());
 
         }
         System.out.println("=====> BEST! --- SIZE: " + bestConsensusSet.size() + ", R: " + bestCircle.getRadius());
@@ -170,20 +170,20 @@ public class RANSAC {
     }
 
     private Circle getCircle(ArrayList<Integer> workingIndexes){
-        ArrayList<MyPoint> workingMyPoints = new ArrayList<MyPoint>();
+        ArrayList<Point> workingPoints = new ArrayList<Point>();
 
         for(int index : workingIndexes) {
-            workingMyPoints.add(this.data.get(index));
+            workingPoints.add(this.data.get(index));
         }
 
-        double a = workingMyPoints.get(0).getX();
-        double b = workingMyPoints.get(0).getY();
+        double a = workingPoints.get(0).getX();
+        double b = workingPoints.get(0).getY();
 
-        double c = workingMyPoints.get(1).getX();
-        double d = workingMyPoints.get(1).getY();
+        double c = workingPoints.get(1).getX();
+        double d = workingPoints.get(1).getY();
 
-        double e = workingMyPoints.get(2).getX();
-        double f = workingMyPoints.get(2).getY();
+        double e = workingPoints.get(2).getX();
+        double f = workingPoints.get(2).getY();
 
         double k = 0.5 * ((a * a + b * b) * (e - c) + (c * c + d * d) * (a - e) + (e * e + f * f) * (c - a)) / (b * (e - c) + d * (a - e) + f * (c - a));
         double h = 0.5 * ((a * a + b * b) * (f - d) + (c * c + d * d) * (b - f) + (e * e + f * f) * (d - b)) / (a * (f - d) + c * (b - f) + e * (d - b)); 
@@ -192,9 +192,9 @@ public class RANSAC {
         return new Circle(h, k, r);
     }
     
-    private ArrayList<Integer> getNMyPoints(){
+    private ArrayList<Integer> getNPoints(){
         ArrayList<Integer> collectedNumbers = new ArrayList<Integer>();
-        ArrayList<MyPoint> result             = new ArrayList<MyPoint>();
+        ArrayList<Point> result             = new ArrayList<Point>();
         Random random                       = new Random();
 
         for (int n = 0; n < 3; n++) {
@@ -212,9 +212,9 @@ public class RANSAC {
   
     private class RANSACResult {
       private Circle circle;
-      private ArrayList<MyPoint> consensusSet;
+      private ArrayList<Point> consensusSet;
 
-      public RANSACResult(ArrayList<MyPoint> consensusSet, Circle circle) {
+      public RANSACResult(ArrayList<Point> consensusSet, Circle circle) {
         this.consensusSet = consensusSet;
         this.circle = circle;
       }
@@ -223,7 +223,7 @@ public class RANSAC {
         return this.circle;
       }
 
-      public ArrayList<MyPoint> getConsensusSet(){
+      public ArrayList<Point> getConsensusSet(){
         return this.consensusSet;
       }
     }
@@ -254,18 +254,6 @@ public class RANSAC {
         @Override
         public String toString(){
             return "X : " + x + ", Y: " + y + ", Radius: " + radius;
-        }
-    }
-
-    public class MyPoint extends Point {
-        private double offset;
-
-        public void setOffset(double offset) {
-            this.offset = offset;
-        }
-
-        public double getOffset(){
-            return this.offset;
         }
     }
 }
