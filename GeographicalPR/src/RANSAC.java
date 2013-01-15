@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 public class RANSAC {
     private ArrayList<Point> data = new ArrayList<Point>();;
     private final int maxIter        = 100000;
-    private final int threshold      = 10;
+    private final int threshold      = 3;
     private final int sufficientSize = (int) Double.POSITIVE_INFINITY;
     private final int width = 1000;
     private final int height = 1000;
@@ -50,7 +50,6 @@ public class RANSAC {
         
         RANSAC ransac = new RANSAC(args[0]);
         RANSACResult r = ransac.execute();
-        System.out.println(r.getCircle());
         ransac.showCanvas(r);
     }
     
@@ -63,6 +62,7 @@ public class RANSAC {
         final int pointSize = this.pointSize;
         final double offsetWidth = width / 2.0 - 100.0;
         final double offsetHeight = height / 2.0 - 300.0;
+        final ArrayList<Point> data = this.data;
 
         frame.add(new Canvas(){
             @Override
@@ -94,6 +94,16 @@ public class RANSAC {
                         pointSize
                     );
                 }
+
+                // g.setColor(Color.BLACK);
+                // for (Point point : data) {
+                //     if(cs.contains(point)){ continue; }
+                //     g.drawString(
+                //         ("X: " + point.getX() + ", Y: " + point.getY()),
+                //         (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
+                //         (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5)
+                //     );
+                // }
             }
         });
         frame.setSize(width, height);
@@ -113,10 +123,12 @@ public class RANSAC {
 
         // while iterations < k
         for (int i = 0; i < this.maxIter; i++) {
-            consensusSet = new ArrayList<Point>();
-
             // maybe_inliers := n randomly selected values from data
             maybeInliers = this.getNPoints();
+            consensusSet = new ArrayList<Point>();
+            for (int index : maybeInliers) {
+                consensusSet.add(this.data.get(index));
+            }
 
             // maybe_model := model parameters fitted to maybe_inliers
             maybeCircle = this.getCircle(maybeInliers);
@@ -125,25 +137,13 @@ public class RANSAC {
                 if(maybeInliers.contains(j)){ continue; }
 
                 Point point = this.data.get(j);
-
-                double a = point.getX();
-                double b = point.getY();
-                double x = maybeCircle.getX();
-                double y = maybeCircle.getY();
-
-                double hyp = Math.sqrt(Math.pow(a - x, 2) + Math.pow(b - y, 2));
-                double offset = Math.abs(maybeCircle.getRadius() - hyp);
+                double offset = this.getOffset(point, maybeCircle);
 
                 if(offset < this.threshold){
-                    // System.out.println(offset);
                     // consensus_set := maybe_inliers
                     consensusSet.add(point);
-                    // System.out.println(point.getX() + "," + point.getY());
                     
                     if(consensusSet.size() > this.sufficientSize) { break; }
-                } else {
-                    point.addOffset(offset);
-                    // System.out.println("A:" + a + ", B: " + b + ", H: " + hyp + ", O: " + offset + ", X " + x + ", Y " + y);
                 }
             }
 
@@ -152,21 +152,20 @@ public class RANSAC {
                 bestCircle = maybeCircle;
             }
 
-            if(consensusSet.size() > 3) {
-                // System.out.println("SIZE: " + consensusSet.size() + ", R: " + maybeCircle.getRadius());
-            }
-
             if(consensusSet.size() > this.sufficientSize) { break; }
         }
-        
-        for (Point point : this.data) {
-            if(bestConsensusSet.contains(point)) { continue; }
-            System.out.println(point.getX() + "," + point.getY() + "OFFSET: " + point.getOffset());
-
-        }
-        System.out.println("=====> BEST! --- SIZE: " + bestConsensusSet.size() + ", R: " + bestCircle.getRadius());
-        
+                
         return new RANSACResult(bestConsensusSet, bestCircle);
+    }
+
+    private double getOffset(Point point, Circle circle) {
+        double x1 = point.getX();
+        double y1 = point.getY();
+        double x2 = circle.getX();
+        double y2 = circle.getY();
+
+        double hyp = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+        return Math.abs(circle.getRadius() - hyp);
     }
 
     private Circle getCircle(ArrayList<Integer> workingIndexes){
