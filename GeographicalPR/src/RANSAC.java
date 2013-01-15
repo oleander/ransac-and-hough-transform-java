@@ -10,9 +10,10 @@ import java.lang.IllegalArgumentException;
 import javax.swing.JFrame;
 
 public class RANSAC {
-    private ArrayList<Point> data = new ArrayList<Point>();;
+    private ArrayList<Point> data = new ArrayList<Point>();
+    private ArrayList<Boolean> correctSet = new ArrayList<Boolean>();
     private final int maxIter        = 100000;
-    private final int threshold      = 3;
+    private final int threshold      = 10;
     private final int sufficientSize = (int) Double.POSITIVE_INFINITY;
     private final int width = 1000;
     private final int height = 1000;
@@ -36,6 +37,7 @@ public class RANSAC {
                 int x = Integer.parseInt(points[0]);
                 int y = Integer.parseInt(points[1]);
                 this.data.add(new Point(x, y));
+                this.correctSet.add(points[2] == "true");
             }
         }
     }
@@ -60,18 +62,20 @@ public class RANSAC {
         final int width = this.width;
         final int height = this.height;
         final int pointSize = this.pointSize;
-        final double offsetWidth = width / 2.0 - 100.0;
-        final double offsetHeight = height / 2.0 - 300.0;
+        final double offsetWidth = width / 2.0;
+        final double offsetHeight = height / 2.0;
         final ArrayList<Point> data = this.data;
 
         frame.add(new Canvas(){
             @Override
             public void paint(Graphics g){
-                g.setColor(Color.BLACK);
+                double offsetWidth = this.getWidth() / 2.0;
+                double offsetHeight = this.getHeight() / 2.0;
+                g.translate((int) Math.round(offsetWidth), (int) Math.round(offsetHeight));
                 for(Point point : data){
                     g.drawOval(
-                        (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
-                        (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5), 
+                        (int) (point.getX() + pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
                         pointSize, 
                         pointSize
                     );
@@ -79,8 +83,8 @@ public class RANSAC {
                 
                 g.setColor(Color.RED);
                 g.drawOval(
-                    (int) (c.getX() - c.getRadius() + offsetWidth + 0.5),
-                    (int) (c.getY() - c.getRadius() + offsetHeight + 0.5),
+                    (int) (c.getX() - c.getRadius() + 0.5),
+                    (int) (c.getY() - c.getRadius() + 0.5),
                     (int) (2 * c.getRadius()), 
                     (int) (2 * c.getRadius())
                 );
@@ -88,8 +92,8 @@ public class RANSAC {
                 g.setColor(Color.GREEN);
                 for(Point point : cs) {
                     g.fillOval(
-                        (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
-                        (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5), 
+                        (int) (point.getX() + pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
                         pointSize, 
                         pointSize
                     );
