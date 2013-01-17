@@ -139,15 +139,25 @@ public class HoughTransform {
         }
 
         public ArrayList<Circle> getTopN(int n){
-            PriorityQueue<Circle> pq = new PriorityQueue<Circle>();
+            PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
             ArrayList<Circle> circles = new ArrayList<Circle>();
 
             for (int x = 0; x < this.getXSpan(); x++) {
                 for (int y = 0; y < this.getYSpan(); y++) {
                     for (int radius = 0; radius < this.r; radius++) {
-                        System.out.println(this.get(x, y, r));
+                        int count = this.store[x][y][radius];
+                        if(count != 0){
+                            pq.add(new CircleContainer(new Circle(x, y, radius), count));
+                        }
                     }
                 }
+            }
+
+            for (int i = 0; i < n; i++) {
+                CircleComparator container = pq.poll();
+                if(container == null) break;
+                System.out.println("COUNT " + container.getCount());
+                circles.add(container.getCircle());
             }
 
             return circles;
@@ -157,22 +167,22 @@ public class HoughTransform {
 
     // import java.util.Comparator;
 
-    // public class StringLengthComparator implements Comparator<String>
-    // {
-    //     @Override
-    //     public int compare(Circle x,  y)
-    //     {
-    //         // Assume neither string is null. Real code should
-    //         // probably be more robust
-    //         if (x.length() < y.length())
-    //         {
-    //             return -1;
-    //         }
-    //         if (x.length() > y.length())
-    //         {
-    //             return 1;
-    //         }
-    //         return 0;
-    //     }
-    // }
+    public class CircleComparator implements Comparator<Circle>
+    {
+        @Override
+        public int compare(Circle x,  y)
+        {
+            // Assume neither string is null. Real code should
+            // probably be more robust
+            if (x.length() < y.length())
+            {
+                return -1;
+            }
+            if (x.length() > y.length())
+            {
+                return 1;
+            }
+            return 0;
+        }
+    }
 }
