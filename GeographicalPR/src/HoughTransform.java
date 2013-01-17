@@ -125,7 +125,6 @@ public class HoughTransform {
         }
 
         public int get(int x, int y, int r) {
-            System.out.println("X" + x + ", Y" + y + ", R" + r);
             return this.store[x - this.minX][y - this.minY][r];
         }
 
@@ -139,8 +138,9 @@ public class HoughTransform {
         }
 
         public ArrayList<Circle> getTopN(int n){
-            PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
-            ArrayList<Circle> circles = new ArrayList<Circle>();
+            PriorityQueue<CircleContainer> pq = new PriorityQueue<CircleContainer>();
+            ArrayList<Circle> circles         = new ArrayList<Circle>();
+            CircleContainer container         = null;
 
             for (int x = 0; x < this.getXSpan(); x++) {
                 for (int y = 0; y < this.getYSpan(); y++) {
@@ -154,9 +154,8 @@ public class HoughTransform {
             }
 
             for (int i = 0; i < n; i++) {
-                CircleComparator container = pq.poll();
+                container = pq.poll();
                 if(container == null) break;
-                System.out.println("COUNT " + container.getCount());
                 circles.add(container.getCircle());
             }
 
@@ -165,16 +164,13 @@ public class HoughTransform {
     }
     
     class CircleContainer implements Comparable<CircleContainer> {
-        
         private Circle circle;
         private int count;
        
         @Override
         public int compareTo(CircleContainer cc) {
-            return Integer.compare(this.count, cc.count);
+            return Double.compare(cc.count, this.count);
         }
-        
-       
         
         public CircleContainer(Circle circle, int count) {
             super();
@@ -182,38 +178,12 @@ public class HoughTransform {
             this.count = count;
         }
 
-
         public Circle getCircle() {
             return circle;
         }
 
         public int getCount() {
             return count;
-        }
-        
-        
-        
-    }
-
-
-    // import java.util.Comparator;
-
-    public class CircleComparator implements Comparator<Circle>
-    {
-        @Override
-        public int compare(Circle x,  y)
-        {
-            // Assume neither string is null. Real code should
-            // probably be more robust
-            if (x.length() < y.length())
-            {
-                return -1;
-            }
-            if (x.length() > y.length())
-            {
-                return 1;
-            }
-            return 0;
         }
     }
 }
