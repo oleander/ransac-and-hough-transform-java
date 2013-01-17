@@ -163,6 +163,37 @@ public class HoughTransform {
             return circles;
         }
     }
+    
+    class CircleContainer implements Comparable<CircleContainer> {
+        
+        private Circle circle;
+        private int count;
+       
+        @Override
+        public int compareTo(CircleContainer cc) {
+            return Integer.compare(this.count, cc.count);
+        }
+        
+       
+        
+        public CircleContainer(Circle circle, int count) {
+            super();
+            this.circle = circle;
+            this.count = count;
+        }
+
+
+        public Circle getCircle() {
+            return circle;
+        }
+
+        public int getCount() {
+            return count;
+        }
+        
+        
+        
+    }
 
 
     // import java.util.Comparator;
