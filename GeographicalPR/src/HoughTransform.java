@@ -3,24 +3,38 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.*;
+import java.awt.Point;
+import javax.swing.JFrame;
 import java.io.*;
 import java.awt.Point;
 import java.lang.IllegalArgumentException;
 
 public class HoughTransform {
-    private SLC pixels = new SLC(-100, 500, -150, 150, 120);
+    private SLC pixels = new SLC(-300, 500, -300, 150, 50);
     private ArrayList<Point> data = new ArrayList<Point>();
+    private final int pointSize = 4;
+    private final int height = 800;
+    private final int width = 800;
 
     public static void main(String[] args) throws IllegalArgumentException { 
         if(args.length == 0){
             throw new IllegalArgumentException();
         }
         
-        new HoughTransform(args[0]).execute();
+        HoughTransform h = new HoughTransform(args[0]);
+        h.execute();
+        final ArrayList<Circle> circles = h.pixels.getTopN(5);
+        for (Circle circle : circles) {
+            System.out.println(circle.getRadius());
+            System.out.println(circle.getX());
+            System.out.println(circle.getY());
+            System.out.println("--- - - ---- --");
+        }
+        h.showCanvas();
     }
 
     /**
-        @filePath Path to file containing points      
+        @filePath Path to file containing points
     */
     public HoughTransform(String filePath) {
         Scanner sc = null;
@@ -48,8 +62,45 @@ public class HoughTransform {
                 this.pixels.increment(circle.getX(), circle.getY(), circle.getRadius());
             }
         }
+    }
 
-        this.pixels.getTopN(5);
+    public void showCanvas(){
+        final ArrayList<Circle> circles = this.pixels.getTopN(5);
+        final int width = this.width;
+        final int height = this.height;
+        final int pointSize = this.pointSize;
+        final double offsetWidth = this.width / 2.0;
+        final double offsetHeight = this.height / 2.0;
+        final ArrayList<Point> data = this.data;
+        JFrame frame = new JFrame();
+        frame.setSize(this.width, this.height);
+        frame.setVisible(true);
+        frame.add(new Canvas(){
+            @Override
+            public void paint(Graphics g){
+                double offsetWidth = this.getWidth() / 2.0;
+                double offsetHeight = this.getHeight() / 2.0;
+                g.translate((int) Math.round(offsetWidth), (int) Math.round(offsetHeight));
+                for(Point point : data){
+                    g.drawOval(
+                        (int) (point.getX() + pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
+                        pointSize, 
+                        pointSize
+                    );
+                }
+                
+                for (Circle c : circles) {
+                    g.setColor(Color.RED);
+                    g.drawOval(
+                        (int) (c.getX() - c.getRadius() + 0.5),
+                        (int) (c.getY() - c.getRadius() + 0.5),
+                        (int) (2 * c.getRadius()), 
+                        (int) (2 * c.getRadius())
+                    );
+                }
+            }
+        });
     }
 
     private ArrayList<Circle> getCircles(Point point){
@@ -57,8 +108,8 @@ public class HoughTransform {
         double x = point.getX();
         double y = point.getY();
 
-        for (int r = 0; r < 5; r++) {
-            for (int b = 0; b < 5; b++) {
+        for (int r = 20; r < 21; r++) {
+            for (int b = 0; b < 1; b++) {
                 double a1 = x - Math.sqrt(-1 * b * b + 2 * b * y + r * r - y * y);
                 double a2 = x + Math.sqrt(-1 * b * b + 2 * b * y + r * r - y * y);
 
@@ -156,6 +207,7 @@ public class HoughTransform {
             for (int i = 0; i < n; i++) {
                 container = pq.poll();
                 if(container == null) break;
+                // System.out.println(container.getCircle().getRadius());
                 circles.add(container.getCircle());
             }
 
