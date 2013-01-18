@@ -36,13 +36,6 @@ public class HoughTransform {
         
         HoughTransform h = new HoughTransform(args[0]);
         h.execute();
-        // final ArrayList<Circle> circles = h.pixels.getTopN(40);
-        // for (Circle circle : circles) {
-        //     System.out.println("Radius: " + circle.getRadius());
-        //     System.out.println("X: " + circle.getX());
-        //     System.out.println("Y: " + circle.getY());
-        //     System.out.println("-----------");
-        // }
         h.showCanvas();
     }
 
@@ -81,7 +74,6 @@ public class HoughTransform {
     public void execute(){
         for (Point point : this.data) {
             ArrayList<Circle> circles = this.getCircles(point);
-            // System.out.println("COUNT: " + circles.size());
             for (Circle circle : circles) {
                 this.pixels.increment(circle.getX(), circle.getY(), circle.getRadius());
             }
@@ -134,11 +126,6 @@ public class HoughTransform {
 
 
         for (int r = this.minRadius; r < this.maxRadius; r++) {
-
-            // double radStep = (int) Math.toRadians(360.0 / (Math.PI * r * 2));
-            // for (int rad = 0; rad < 2 * Math.PI; rad += radStep) {
-            //     System.out.println(rad);
-            //     double b = y + r * Math.cos(rad);
             for (int b = this.minYCord; b < this.maxYCord; b++) {
                 double res = -1 * b * b + 2 * b * y + r * r - y * y;
                 if(res < 0) continue;
