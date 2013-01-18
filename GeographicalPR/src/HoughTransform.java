@@ -188,6 +188,14 @@ public class HoughTransform {
             this.set(x, y, r, count + 1);
         }
 
+        public int getProperX(int x) {
+            return x + this.minX;
+        }
+
+        public int getProperY(int y){
+            return y + this.minY;
+        }
+
         public ArrayList<Circle> getTopN(int n){
             PriorityQueue<CircleContainer> pq = new PriorityQueue<CircleContainer>();
             ArrayList<Circle> circles         = new ArrayList<Circle>();
@@ -198,7 +206,7 @@ public class HoughTransform {
                     for (int radius = 0; radius < this.r; radius++) {
                         int count = this.store[x][y][radius];
                         if(count != 0){
-                            pq.add(new CircleContainer(new Circle(x, y, radius), count));
+                            pq.add(new CircleContainer(new Circle(this.getProperX(x), this.getProperY(y), radius), count));
                         }
                     }
                 }
