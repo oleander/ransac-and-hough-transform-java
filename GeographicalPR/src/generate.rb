@@ -1,4 +1,4 @@
-OFFSET_PERCENT = 0
+OFFSET_PERCENT = 3
 def mess(x)
    x + (x * rand(OFFSET_PERCENT) / 100.0) * [-1, 1].sample
 end
