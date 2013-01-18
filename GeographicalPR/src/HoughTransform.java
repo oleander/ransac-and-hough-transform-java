@@ -10,7 +10,7 @@ import java.awt.Point;
 import java.lang.IllegalArgumentException;
 
 public class HoughTransform {
-    private final int minRadius = 40;
+    private final int minRadius = 45;
     private final int maxRadius = 120;
 
     private final int minXCord = -200;
