@@ -10,7 +10,16 @@ import java.awt.Point;
 import java.lang.IllegalArgumentException;
 
 public class HoughTransform {
-    private SLC pixels = new SLC(-300, 500, -300, 150, 50);
+    private final int minRadius = 0;
+    private final int maxRadius = 50;
+
+    private final int minXCord = -150;
+    private final int maxXCord = 150;
+
+    private final int minYCord = -150;
+    private final int maxYCord = 150;
+
+    private SLC pixels = null;
     private ArrayList<Point> data = new ArrayList<Point>();
     private final int pointSize = 4;
     private final int height = 800;
@@ -53,6 +62,14 @@ public class HoughTransform {
                 this.data.add(new Point(x, y));
             }
         }
+
+        this.pixels = new SLC(
+            this.minXCord, 
+            this.maxXCord, 
+            this.minYCord, 
+            this.maxYCord, 
+            this.maxRadius
+        );
     }
 
     public void execute(){
@@ -108,8 +125,8 @@ public class HoughTransform {
         double x = point.getX();
         double y = point.getY();
 
-        for (int r = 20; r < 21; r++) {
-            for (int b = 0; b < 1; b++) {
+        for (int r = this.minRadius; r < this.maxRadius; r++) {
+            for (int b = this.minXCord; b < this.maxXCord; b++) {
                 double a1 = x - Math.sqrt(-1 * b * b + 2 * b * y + r * r - y * y);
                 double a2 = x + Math.sqrt(-1 * b * b + 2 * b * y + r * r - y * y);
 
@@ -117,7 +134,6 @@ public class HoughTransform {
                 circles.add(new Circle(((int) Math.round(a2)), b, r));
             }
         }
-
         return circles;
     }
 
