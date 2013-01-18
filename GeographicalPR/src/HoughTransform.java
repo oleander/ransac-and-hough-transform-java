@@ -10,8 +10,8 @@ import java.awt.Point;
 import java.lang.IllegalArgumentException;
 
 public class HoughTransform {
-    private final int minRadius = 45;
-    private final int maxRadius = 120;
+    private final int minRadius = 30;
+    private final int maxRadius = 130;
 
     private final int minXCord = -200;
     private final int maxXCord = 200;
@@ -187,6 +187,8 @@ public class HoughTransform {
         private int threshold;
         private int r;
         private int[][][] store;
+        private final int queueLimit = 10;
+
 
         public SLC(int minX, int maxX, int minY, int maxY, int minR, int maxR, int threshold){
             this.minR = minR;
@@ -248,7 +250,7 @@ public class HoughTransform {
                 for (int y = this.minY; y < this.maxY; y++) {
                     for (int radius = this.minR; radius < this.maxR; radius++) {
                         int count = this.get(x, y, radius);
-                        if(count > 2){
+                        if(count > this.queueLimit){
                             circle = new Circle(x, y, radius);
                             pq.add(new CircleContainer(circle, count));
                         }
