@@ -10,14 +10,16 @@ import java.awt.Point;
 import java.lang.IllegalArgumentException;
 
 public class HoughTransform {
-    private final int minRadius = 0;
-    private final int maxRadius = 50;
+    private final int minRadius = 40;
+    private final int maxRadius = 60;
 
-    private final int minXCord = -150;
-    private final int maxXCord = 150;
+    private final int minXCord = -200;
+    private final int maxXCord = 200;
 
-    private final int minYCord = -150;
-    private final int maxYCord = 150;
+    private final int minYCord = -200;
+    private final int maxYCord = 200;
+
+    private final int threshold = 10;
 
     private SLC pixels = null;
     private ArrayList<Point> data = new ArrayList<Point>();
@@ -32,13 +34,13 @@ public class HoughTransform {
         
         HoughTransform h = new HoughTransform(args[0]);
         h.execute();
-        final ArrayList<Circle> circles = h.pixels.getTopN(5);
-        for (Circle circle : circles) {
-            System.out.println(circle.getRadius());
-            System.out.println(circle.getX());
-            System.out.println(circle.getY());
-            System.out.println("--- - - ---- --");
-        }
+        // final ArrayList<Circle> circles = h.pixels.getTopN(40);
+        // for (Circle circle : circles) {
+        //     System.out.println("Radius: " + circle.getRadius());
+        //     System.out.println("X: " + circle.getX());
+        //     System.out.println("Y: " + circle.getY());
+        //     System.out.println("-----------");
+        // }
         h.showCanvas();
     }
 
@@ -68,13 +70,15 @@ public class HoughTransform {
             this.maxXCord, 
             this.minYCord, 
             this.maxYCord, 
-            this.maxRadius
+            this.maxRadius,
+            this.threshold
         );
     }
 
     public void execute(){
         for (Point point : this.data) {
             ArrayList<Circle> circles = this.getCircles(point);
+            // System.out.println("COUNT: " + circles.size());
             for (Circle circle : circles) {
                 this.pixels.increment(circle.getX(), circle.getY(), circle.getRadius());
             }
@@ -82,7 +86,7 @@ public class HoughTransform {
     }
 
     public void showCanvas(){
-        final ArrayList<Circle> circles = this.pixels.getTopN(5);
+        final ArrayList<Circle> circles = this.pixels.getTopN(2);
         final int width = this.width;
         final int height = this.height;
         final int pointSize = this.pointSize;
@@ -125,13 +129,35 @@ public class HoughTransform {
         double x = point.getX();
         double y = point.getY();
 
-        for (int r = this.minRadius; r < this.maxRadius; r++) {
-            for (int b = this.minXCord; b < this.maxXCord; b++) {
-                double a1 = x - Math.sqrt(-1 * b * b + 2 * b * y + r * r - y * y);
-                double a2 = x + Math.sqrt(-1 * b * b + 2 * b * y + r * r - y * y);
 
-                circles.add(new Circle(((int) Math.round(a1)), b, r));
-                circles.add(new Circle(((int) Math.round(a2)), b, r));
+        for (int r = this.minRadius; r < this.maxRadius; r++) {
+
+            // double radStep = (int) Math.toRadians(360.0 / (Math.PI * r * 2));
+            // for (int rad = 0; rad < 2 * Math.PI; rad += radStep) {
+            //     System.out.println(rad);
+            //     double b = y + r * Math.cos(rad);
+            for (int b = this.minYCord; b < this.maxYCord; b++) {
+                double res = -1 * b * b + 2 * b * y + r * r - y * y;
+                if(res < 0) continue;
+
+                double a1 = x - Math.sqrt(res);
+                double a2 = x + Math.sqrt(res);
+
+                if(this.minXCord > a1){
+                    System.out.println("FEL 1");
+                }
+
+                if(this.maxXCord < a1){
+                    System.out.println("FEL 2");
+                }
+
+                int a11 = (int) Math.round(a1);
+                int a22 = (int) Math.round(a2);
+                if(a11 < this.minXCord || a11 > this.maxXCord) continue;
+                if(a22 < this.minXCord || a22 > this.maxXCord) continue;
+
+                circles.add(new Circle(a11, (int) b, r));
+                circles.add(new Circle(a22, (int) b, r));
             }
         }
         return circles;
@@ -171,16 +197,18 @@ public class HoughTransform {
         private int maxX;
         private int minY;
         private int maxY;
+        private int threshold;
         private int r;
         private int[][][] store;
 
-        public SLC(int minX, int maxX, int minY, int maxY, int r){
+        public SLC(int minX, int maxX, int minY, int maxY, int r, int threshold){
             this.minX = minX;
             this.maxX = maxX;
             this.minY = minY;
             this.maxY = maxY;
             this.r = r;
-            this.store = new int[this.getXSpan()][this.getYSpan()][r];
+            this.threshold = threshold;
+            this.store = new int[this.getXSpan() + 1][this.getYSpan() + 1][r];
         }
 
         private int getXSpan(){
@@ -200,6 +228,7 @@ public class HoughTransform {
         }
 
         public void increment(int x, int y, int r){
+            // System.out.println("x: " + x + ", y: " + y + "r: " + r);
             int count = this.get(x, y, r);
             this.set(x, y, r, count + 1);
         }
@@ -216,25 +245,49 @@ public class HoughTransform {
             PriorityQueue<CircleContainer> pq = new PriorityQueue<CircleContainer>();
             ArrayList<Circle> circles         = new ArrayList<Circle>();
             CircleContainer container         = null;
+            Circle circle = null;
 
-            for (int x = 0; x < this.getXSpan(); x++) {
-                for (int y = 0; y < this.getYSpan(); y++) {
+            for (int x = this.minX; x < this.maxX; x++) {
+                for (int y = this.minY; y < this.maxY; y++) {
                     for (int radius = 0; radius < this.r; radius++) {
-                        int count = this.store[x][y][radius];
+                        // System.out.println("x=" + x + "y=" + y + "r=" + radius);
+                        int count = this.get(x, y, radius);
                         if(count != 0){
-                            pq.add(new CircleContainer(new Circle(this.getProperX(x), this.getProperY(y), radius), count));
+                            circle = new Circle(x, y, radius);
+                            pq.add(new CircleContainer(circle, count));
                         }
                     }
                 }
             }
 
-            for (int i = 0; i < n; i++) {
+            Circle currCircle = null;
+            double distance = -1;
+            boolean skip = false;
+
+            while(circles.size() < n){
                 container = pq.poll();
                 if(container == null) break;
-                // System.out.println(container.getCircle().getRadius());
-                circles.add(container.getCircle());
-            }
+                currCircle = container.getCircle();
 
+                for(Circle prevCircle : circles) {
+                    distance = Math.sqrt(
+                        Math.pow(currCircle.getX() - prevCircle.getX(), 2)
+                        +
+                        Math.pow(currCircle.getY() - prevCircle.getY(), 2)
+                    );
+
+                    if(distance < this.threshold) {
+                        skip = true; break;
+                    }
+                }
+
+                if(!skip){
+                    circles.add(currCircle);
+                }
+
+                skip = false;
+            }
+            
             return circles;
         }
     }
