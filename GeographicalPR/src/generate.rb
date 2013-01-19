@@ -1,4 +1,4 @@
-OFFSET_PERCENT = 3
+OFFSET_PERCENT = 0
 def mess(x)
    x + (x * rand(OFFSET_PERCENT) / 100.0) * [-1, 1].sample
 end
@@ -26,9 +26,9 @@ raw += 100.times.map do
   [mess(x).round.to_i, mess(y).round.to_i, "true"].join(",") 
 end
 
-raw += 100.times.map do 
-  [rand(200) * [-1, 1].sample, rand(200) * [-1, 1].sample, "true"].join(",") 
-end
+# raw += 100.times.map do 
+#   [rand(200) * [-1, 1].sample, rand(200) * [-1, 1].sample, "true"].join(",") 
+# end
 
 # raw += 150.times.map do
 #   [rand(800).round.to_i * [-1, 1].sample, rand(800).round.to_i * [-1, 1].sample , "false"].join(",") 
