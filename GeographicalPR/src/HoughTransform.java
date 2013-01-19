@@ -33,7 +33,7 @@ public class HoughTransform {
     private final int height          = 800;
     private final int width           = 800;
 
-    private SLC pixels                = null;
+    private AccumulatorWrapper pixels                = null;
     private ArrayList<Point> data     = new ArrayList<Point>();
 
     /**
@@ -70,7 +70,7 @@ public class HoughTransform {
             }
         }
 
-        this.pixels = new SLC(
+        this.pixels = new AccumulatorWrapper(
             this.minXCord, 
             this.maxXCord, 
             this.minYCord, 
