@@ -8,22 +8,22 @@ def t; rand(100) / 100.0 * 2 * Math::PI; end
 
 raw = 100.times.map do 
   x, y = c(0, 0, 50)
-  [mess(x).round.to_i, mess(y).round.to_i, "true"].join(",") 
+  [mess(x).round.to_i, mess(y).round.to_i].join(",") 
 end
 
 raw += 100.times.map do 
   x, y = c(100, 140, 110)
-  [mess(x).round.to_i, mess(y).round.to_i, "true"].join(",") 
+  [mess(x).round.to_i, mess(y).round.to_i].join(",") 
 end
 
 raw += 100.times.map do 
   x, y = c(0, 50, 50)
-  [mess(x).round.to_i, mess(y).round.to_i, "true"].join(",") 
+  [mess(x).round.to_i, mess(y).round.to_i].join(",") 
 end
 
 raw += 100.times.map do 
   x, y = c(20, 100, 100)
-  [mess(x).round.to_i, mess(y).round.to_i, "true"].join(",") 
+  [mess(x).round.to_i, mess(y).round.to_i].join(",") 
 end
 
 # raw += 100.times.map do 
