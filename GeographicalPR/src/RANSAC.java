@@ -53,6 +53,9 @@ public class RANSAC {
         new RANSAC(args[0]).showCanvas();
     }
     
+    /**
+     * Displays the data points and the calculated circles on a canvas
+     */
     public void showCanvas(){
         final RANSACResult r = this.execute();
         final Circle c = r.getCircle();
@@ -145,7 +148,12 @@ public class RANSAC {
         frame.setSize(width, height);
         frame.setVisible(true);
     }
-  
+    
+    /**
+     * Runs the RANSAC algorithm
+     * @return a RANSACResult, which contains the circle and its corresponding consensus set
+     * @throws IllegalArgumentException
+     */
     public RANSACResult execute() throws IllegalArgumentException {
         if(this.data.size() == 0){
             throw new IllegalArgumentException("File containing points is empty");
@@ -193,7 +201,8 @@ public class RANSAC {
                 
         return new RANSACResult(bestConsensusSet, bestCircle);
     }
-
+    
+    
     private double getOffset(Point point, Circle circle) {
         double x1 = point.getX();
         double y1 = point.getY();
