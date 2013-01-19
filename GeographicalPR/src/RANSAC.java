@@ -50,12 +50,11 @@ public class RANSAC {
             throw new IllegalArgumentException();
         }
         
-        RANSAC ransac = new RANSAC(args[0]);
-        RANSACResult r = ransac.execute();
-        ransac.showCanvas(r);
+        new RANSAC(args[0]).showCanvas();
     }
     
-    public void showCanvas(final RANSACResult r){
+    public void showCanvas(){
+        final RANSACResult r = this.execute();
         final Circle c = r.getCircle();
         final ArrayList<Point> cs = r.getConsensusSet();
         JFrame frame = new JFrame();
@@ -108,6 +107,39 @@ public class RANSAC {
                 //         (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5)
                 //     );
                 // }
+
+                double highestRadius = -1;
+                double smallestRadius = Double.POSITIVE_INFINITY;
+                for(Point point : r.getConsensusSet()){
+                    double distance = Math.sqrt(
+                        Math.pow(point.getX() - c.getX(), 2) + 
+                        Math.pow(point.getY() - c.getY(), 2)
+                    );
+
+                    if(distance > highestRadius) {
+                        highestRadius = distance;
+                    }
+
+                    if(distance < smallestRadius) {
+                        smallestRadius = distance;
+                    }
+                }
+
+                g.setColor(Color.BLUE);
+                g.drawOval(
+                    (int) (c.getX() - highestRadius + 0.5),
+                    (int) (c.getY() - highestRadius + 0.5),
+                    (int) (2 * highestRadius), 
+                    (int) (2 * highestRadius)
+                );
+
+                g.setColor(Color.ORANGE);
+                g.drawOval(
+                    (int) (c.getX() - smallestRadius + 0.5),
+                    (int) (c.getY() - smallestRadius + 0.5),
+                    (int) (2 * smallestRadius), 
+                    (int) (2 * smallestRadius)
+                );
             }
         });
         frame.setSize(width, height);
