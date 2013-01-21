@@ -58,8 +58,8 @@ public class RANSAC {
      */
     public void showCanvas(){
         final RANSACResult r = this.execute();
-        final Circle c = r.getCircle();
-        final ArrayList<Point> cs = r.getConsensusSet();
+        final Circle circle = r.getCircle();
+        final ArrayList<Point> consensusSet = r.getConsensusSet();
         JFrame frame = new JFrame();
         final int width = this.width;
         final int height = this.height;
@@ -85,14 +85,14 @@ public class RANSAC {
                 
                 g.setColor(Color.RED);
                 g.drawOval(
-                    (int) (c.getX() - c.getRadius() + 0.5),
-                    (int) (c.getY() - c.getRadius() + 0.5),
-                    (int) (2 * c.getRadius()), 
-                    (int) (2 * c.getRadius())
+                    (int) (circle.getX() - circle.getRadius() + 0.5),
+                    (int) (circle.getY() - circle.getRadius() + 0.5),
+                    (int) (2 * circle.getRadius()), 
+                    (int) (2 * circle.getRadius())
                 );
 
                 g.setColor(Color.GREEN);
-                for(Point point : cs) {
+                for(Point point : consensusSet) {
                     g.fillOval(
                         (int) (point.getX() + pointSize / 2.0 + 0.5),
                         (int) (point.getY() + pointSize / 2.0 + 0.5), 
@@ -101,22 +101,13 @@ public class RANSAC {
                     );
                 }
 
-                // g.setColor(Color.BLACK);
-                // for (Point point : data) {
-                //     if(cs.contains(point)){ continue; }
-                //     g.drawString(
-                //         ("X: " + point.getX() + ", Y: " + point.getY()),
-                //         (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
-                //         (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5)
-                //     );
-                // }
 
                 double highestRadius = -1;
                 double smallestRadius = Double.POSITIVE_INFINITY;
                 for(Point point : r.getConsensusSet()){
                     double distance = Math.sqrt(
-                        Math.pow(point.getX() - c.getX(), 2) + 
-                        Math.pow(point.getY() - c.getY(), 2)
+                        Math.pow(point.getX() - circle.getX(), 2) + 
+                        Math.pow(point.getY() - circle.getY(), 2)
                     );
 
                     if(distance > highestRadius) {
@@ -130,16 +121,16 @@ public class RANSAC {
 
                 g.setColor(Color.BLUE);
                 g.drawOval(
-                    (int) (c.getX() - highestRadius + 0.5),
-                    (int) (c.getY() - highestRadius + 0.5),
+                    (int) (circle.getX() - highestRadius + 0.5),
+                    (int) (circle.getY() - highestRadius + 0.5),
                     (int) (2 * highestRadius), 
                     (int) (2 * highestRadius)
                 );
 
                 g.setColor(Color.ORANGE);
                 g.drawOval(
-                    (int) (c.getX() - smallestRadius + 0.5),
-                    (int) (c.getY() - smallestRadius + 0.5),
+                    (int) (circle.getX() - smallestRadius + 0.5),
+                    (int) (circle.getY() - smallestRadius + 0.5),
                     (int) (2 * smallestRadius), 
                     (int) (2 * smallestRadius)
                 );
@@ -202,7 +193,7 @@ public class RANSAC {
         return new RANSACResult(bestConsensusSet, bestCircle);
     }
     
-    
+    // Calculate the distance between a point and the center of a circle
     private double getOffset(Point point, Circle circle) {
         double x1 = point.getX();
         double y1 = point.getY();
@@ -213,6 +204,8 @@ public class RANSAC {
         return Math.abs(circle.getRadius() - hyp);
     }
 
+    //Find the circle that passes through the three given points 
+    // http://2000clicks.com/mathhelp/GeometryConicSectionCircleEquationGivenThreePoints.aspx
     private Circle getCircle(ArrayList<Integer> workingIndexes){
         ArrayList<Point> workingPoints = new ArrayList<Point>();
 
@@ -228,7 +221,7 @@ public class RANSAC {
 
         double e = workingPoints.get(2).getX();
         double f = workingPoints.get(2).getY();
-
+        
         double k = 0.5 * ((a * a + b * b) * (e - c) + (c * c + d * d) * (a - e) + (e * e + f * f) * (c - a)) / (b * (e - c) + d * (a - e) + f * (c - a));
         double h = 0.5 * ((a * a + b * b) * (f - d) + (c * c + d * d) * (b - f) + (e * e + f * f) * (d - b)) / (a * (f - d) + c * (b - f) + e * (d - b)); 
         double r = Math.sqrt(Math.pow(a - h, 2) + Math.pow(b - k, 2));
@@ -236,6 +229,7 @@ public class RANSAC {
         return new Circle(h, k, r);
     }
     
+    // Choose n data points at random
     private ArrayList<Integer> getNPoints(){
         ArrayList<Integer> collectedNumbers = new ArrayList<Integer>();
         ArrayList<Point> result             = new ArrayList<Point>();
@@ -253,7 +247,8 @@ public class RANSAC {
 
         return collectedNumbers;
     }
-  
+    
+    // Representation of the circle model with corresponding consensus set
     private class RANSACResult {
       private Circle circle;
       private ArrayList<Point> consensusSet;
