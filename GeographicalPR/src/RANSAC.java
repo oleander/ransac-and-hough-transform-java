@@ -82,60 +82,60 @@ public class RANSAC {
                     );
                 }
                 
-                g.setColor(Color.RED);
-                g.drawOval(
-                    (int) (circle.getX() - circle.getRadius() + 0.5),
-                    (int) (circle.getY() - circle.getRadius() + 0.5),
-                    (int) (2 * circle.getRadius()), 
-                    (int) (2 * circle.getRadius())
-                );
+                // g.setColor(Color.RED);
+                // g.drawOval(
+                //     (int) (circle.getX() - circle.getRadius() + 0.5),
+                //     (int) (circle.getY() - circle.getRadius() + 0.5),
+                //     (int) (2 * circle.getRadius()), 
+                //     (int) (2 * circle.getRadius())
+                // );
 
-                g.setColor(Color.GREEN);
-                for(Point point : consensusSet) {
-                    g.fillOval(
-                        (int) (point.getX() + pointSize / 2.0 + 0.5),
-                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
-                        pointSize, 
-                        pointSize
-                    );
-                }
+                // g.setColor(Color.GREEN);
+                // for(Point point : consensusSet) {
+                //     g.fillOval(
+                //         (int) (point.getX() + pointSize / 2.0 + 0.5),
+                //         (int) (point.getY() + pointSize / 2.0 + 0.5), 
+                //         pointSize, 
+                //         pointSize
+                //     );
+                // }
 
 
-                double highestRadius = -1;
-                double smallestRadius = Double.POSITIVE_INFINITY;
-                for(Point point : r.getConsensusSet()){
-                    double distance = Math.sqrt(
-                        Math.pow(point.getX() - circle.getX(), 2) + 
-                        Math.pow(point.getY() - circle.getY(), 2)
-                    );
+                // double highestRadius = -1;
+                // double smallestRadius = Double.POSITIVE_INFINITY;
+                // for(Point point : r.getConsensusSet()){
+                //     double distance = Math.sqrt(
+                //         Math.pow(point.getX() - circle.getX(), 2) + 
+                //         Math.pow(point.getY() - circle.getY(), 2)
+                //     );
 
-                    if(distance > highestRadius) {
-                        highestRadius = distance;
-                    }
+                //     if(distance > highestRadius) {
+                //         highestRadius = distance;
+                //     }
 
-                    if(distance < smallestRadius) {
-                        smallestRadius = distance;
-                    }
-                }
+                //     if(distance < smallestRadius) {
+                //         smallestRadius = distance;
+                //     }
+                // }
 
-                g.setColor(Color.BLUE);
-                g.drawOval(
-                    (int) (circle.getX() - highestRadius + 0.5),
-                    (int) (circle.getY() - highestRadius + 0.5),
-                    (int) (2 * highestRadius), 
-                    (int) (2 * highestRadius)
-                );
+                // g.setColor(Color.BLUE);
+                // g.drawOval(
+                //     (int) (circle.getX() - highestRadius + 0.5),
+                //     (int) (circle.getY() - highestRadius + 0.5),
+                //     (int) (2 * highestRadius), 
+                //     (int) (2 * highestRadius)
+                // );
 
-                g.setColor(Color.ORANGE);
-                g.drawOval(
-                    (int) (circle.getX() - smallestRadius + 0.5),
-                    (int) (circle.getY() - smallestRadius + 0.5),
-                    (int) (2 * smallestRadius), 
-                    (int) (2 * smallestRadius)
-                );
+                // g.setColor(Color.ORANGE);
+                // g.drawOval(
+                //     (int) (circle.getX() - smallestRadius + 0.5),
+                //     (int) (circle.getY() - smallestRadius + 0.5),
+                //     (int) (2 * smallestRadius), 
+                //     (int) (2 * smallestRadius)
+                // );
 
-                System.out.println("smallestRadius=" + smallestRadius);
-                System.out.println("highestRadius=" + highestRadius);
+                // System.out.println("smallestRadius=" + smallestRadius);
+                // System.out.println("highestRadius=" + highestRadius);
             }
 
         });
