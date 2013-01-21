@@ -37,7 +37,6 @@ public class RANSAC {
                 int x = Integer.parseInt(points[0]);
                 int y = Integer.parseInt(points[1]);
                 this.data.add(new Point(x, y));
-                this.correctSet.add(points[2] == "true");
             }
         }
     }
@@ -83,23 +82,23 @@ public class RANSAC {
                     );
                 }
                 
-                g.setColor(Color.RED);
-                g.drawOval(
-                    (int) (c.getX() - c.getRadius() + 0.5),
-                    (int) (c.getY() - c.getRadius() + 0.5),
-                    (int) (2 * c.getRadius()), 
-                    (int) (2 * c.getRadius())
-                );
+                // g.setColor(Color.RED);
+                // g.drawOval(
+                //     (int) (c.getX() - c.getRadius() + 0.5),
+                //     (int) (c.getY() - c.getRadius() + 0.5),
+                //     (int) (2 * c.getRadius()), 
+                //     (int) (2 * c.getRadius())
+                // );
 
-                g.setColor(Color.GREEN);
-                for(Point point : cs) {
-                    g.fillOval(
-                        (int) (point.getX() + pointSize / 2.0 + 0.5),
-                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
-                        pointSize, 
-                        pointSize
-                    );
-                }
+                // g.setColor(Color.GREEN);
+                // for(Point point : cs) {
+                //     g.fillOval(
+                //         (int) (point.getX() + pointSize / 2.0 + 0.5),
+                //         (int) (point.getY() + pointSize / 2.0 + 0.5), 
+                //         pointSize, 
+                //         pointSize
+                //     );
+                // }
 
                 double highestRadius = -1;
                 double smallestRadius = Double.POSITIVE_INFINITY;
@@ -133,7 +132,11 @@ public class RANSAC {
                     (int) (2 * smallestRadius), 
                     (int) (2 * smallestRadius)
                 );
+
+                System.out.println("smallestRadius=" + smallestRadius);
+                System.out.println("highestRadius=" + highestRadius);
             }
+
         });
         frame.setSize(width, height);
         frame.setVisible(true);
