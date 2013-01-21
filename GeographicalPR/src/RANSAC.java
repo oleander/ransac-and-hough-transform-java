@@ -37,7 +37,6 @@ public class RANSAC {
                 int x = Integer.parseInt(points[0]);
                 int y = Integer.parseInt(points[1]);
                 this.data.add(new Point(x, y));
-                this.correctSet.add(points[2] == "true");
             }
         }
     }
@@ -134,7 +133,11 @@ public class RANSAC {
                     (int) (2 * smallestRadius), 
                     (int) (2 * smallestRadius)
                 );
+
+                System.out.println("smallestRadius=" + smallestRadius);
+                System.out.println("highestRadius=" + highestRadius);
             }
+
         });
         frame.setSize(width, height);
         frame.setVisible(true);

@@ -141,11 +141,13 @@ public class HoughTransform {
         frame.setVisible(true);
     }
 
+    /*
+        Find every other circle that has @point.getY() and @point.getX() as it's center
+    */
     private ArrayList<Circle> getCircles(Point point){
         ArrayList<Circle> circles = new ArrayList<Circle>();
-        double x = point.getX();
-        double y = point.getY();
-
+        double x                  = point.getX();
+        double y                  = point.getY();
 
         for (int r = this.minRadius; r < this.maxRadius; r++) {
             for (int b = this.minYCord; b < this.maxYCord; b++) {
@@ -163,8 +165,8 @@ public class HoughTransform {
                 if(a11 < this.minXCord || a11 > this.maxXCord) continue;
                 if(a22 < this.minXCord || a22 > this.maxXCord) continue;
 
-                circles.add(new Circle(a11, (int) b, r));
-                circles.add(new Circle(a22, (int) b, r));
+                circles.add(new Circle(a11, b, r));
+                circles.add(new Circle(a22, b, r));
             }
         }
         return circles;
