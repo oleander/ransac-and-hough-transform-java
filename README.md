@@ -27,6 +27,8 @@ Points from *points.r.data* are being used.
 
 ![PS2](http://i.imgur.com/U5HaP7R.png)
 
+![PS3](http://i.imgur.com/RR8M50p.png)
+
 ## Hough Transform
 
 ### Methods
