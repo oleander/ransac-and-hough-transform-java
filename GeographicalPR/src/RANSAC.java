@@ -101,16 +101,6 @@ public class RANSAC {
                     );
                 }
 
-                // g.setColor(Color.BLACK);
-                // for (Point point : data) {
-                //     if(cs.contains(point)){ continue; }
-                //     g.drawString(
-                //         ("X: " + point.getX() + ", Y: " + point.getY()),
-                //         (int) (point.getX() + offsetWidth - pointSize / 2.0 + 0.5),
-                //         (int) (point.getY() + offsetHeight - pointSize / 2.0 + 0.5)
-                //     );
-                // }
-
                 double highestRadius = -1;
                 double smallestRadius = Double.POSITIVE_INFINITY;
                 for(Point point : r.getConsensusSet()){
