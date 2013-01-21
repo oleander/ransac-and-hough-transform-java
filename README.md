@@ -11,7 +11,9 @@ Java implementation of the Hough transform and RANSAC algorithm
 
 ## Hough Transform
 
+### Methods
+
 - (+) execute() *Executes the Hough Transform algorithm.*
 - (+) showCanvas() *Render view based on this.pixels.*
-- (-) getCircles() *Finds every other circle that has @point.getY() and @point.getX() as it's center*
+- (-) getCircles() *Finds every other circle that has @point.getY() and @point.getX() as its center*
 
