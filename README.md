@@ -6,8 +6,11 @@ Java implementation of the Hough transform and RANSAC algorithm
 
 ### Methods
 
-- (+) showCanvas *Displays the data points and the calculated circles on a canvas.*
-- (+) execute *Runs the RANSAC algorithm.*
+- (+) showCanvas() *Displays the data points and the calculated circles on a canvas.*
+- (+) execute() *Runs the RANSAC algorithm.*
+- (-) getOffset() *Calculate the distance between a point and the center of a circle*
+- (-) getCircle() *Find the circle that passes through the three given points*
+- (-) getNPoints() *Choose n data points at random* 
 
 ### Illustrations
 
