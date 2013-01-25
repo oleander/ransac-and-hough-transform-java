@@ -22,11 +22,8 @@ public class HoughTransform {
     private final int minYCord        = -200;
     private final int maxYCord        = 200;
 
-    private final int radiusSize      = 5;
-    private final int cellSize        = 5; 
-
-    /* Number of circles to be found */
-    private final int numberOfCircles = 4;
+    private final int radiusSize      = 10;
+    private final int cellSize        = 10; 
 
     /* View related */
     private final int pointSize       = 4;
@@ -99,7 +96,7 @@ public class HoughTransform {
         Render view based on this.pixels
     */
     public void showCanvas() throws IllegalArgumentException {
-        final ArrayList<Circle> circles = this.pixels.getTopN(this.numberOfCircles);
+        final ArrayList<Circle> circles = this.pixels.getCandidates();
         final int width                 = this.width;
         final int height                = this.height;
         final int pointSize             = this.pointSize;

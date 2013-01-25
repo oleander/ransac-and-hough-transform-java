@@ -3,8 +3,8 @@ import java.util.*;
  * A wrapper class for the 3D matrix that stores the circles 
  */
 public class AccumulatorWrapper {
-    private double cellSize;
-    private double radiusSize;
+    private int cellSize;
+    private int radiusSize;
     private int minX;
     private int maxX;
     private int minY;
@@ -13,7 +13,7 @@ public class AccumulatorWrapper {
     private int minR;
     private int r;
     private int[][][] store;
-    private final int queueLimit = 10;
+    private final int threshold = 3000;
 
     public AccumulatorWrapper(
         int minX, 
@@ -34,15 +34,21 @@ public class AccumulatorWrapper {
         this.cellSize = cellSize;
         this.radiusSize = radiusSize;
 
-        int x = (int) (this.getXSpan() / this.cellSize + 0.5);
-        int y = (int) (this.getYSpan() / this.cellSize + 0.5);
-        int r = (int) (this.getRSpan() / this.radiusSize + 0.5);
-        
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println(r);
+        this.store = new int[this.getAllocationForX()]
+            [this.getAllocationForY()]
+            [this.getAllocationForR()];
+    }
 
-        this.store = new int[x][y][r];
+    private int getAllocationForX(){
+        return (int) (this.getXSpan() / this.cellSize + 0.5);
+    }
+
+    private int getAllocationForY(){
+        return (int) (this.getYSpan() / this.cellSize + 0.5);
+    }
+
+    private int getAllocationForR(){
+        return (int) (this.getRSpan() / this.radiusSize + 0.5);
     }
 
     public int get(int x, int y, int r) {
@@ -75,49 +81,27 @@ public class AccumulatorWrapper {
      * @param the number of models to return
      * @return a list containing the top n models
      */
-    public ArrayList<Circle> getTopN(int n){
-        PriorityQueue<CircleContainer> pq = new PriorityQueue<CircleContainer>();
-        ArrayList<Circle> circles         = new ArrayList<Circle>();
-        CircleContainer container         = null;
-        Circle circle = null;
-
-        for (int x = this.minX; x < this.maxX; x++) {
-            for (int y = this.minY; y < this.maxY; y++) {
-                for (int radius = this.minR; radius < this.maxR; radius++) {
-                    int count = this.get(x, y, radius);
-                    if(count > this.queueLimit){
-                        circle = new Circle(x, y, radius);
-                        pq.add(new CircleContainer(circle, count));
+    public ArrayList<Circle> getCandidates(){
+        ArrayList<Circle> candidates = new ArrayList<Circle>();
+                
+        for (int x = 0; x < this.getAllocationForX(); x++) {
+            for (int y = 0; y < this.getAllocationForY(); y++) {
+                for (int radius = 0; radius < this.getAllocationForR(); radius++) {
+                    int count = this.store[x][y][radius];
+                    if(count > this.threshold){
+                        candidates.add(
+                            new Circle(
+                                x * (this.cellSize / 2), 
+                                y * (this.cellSize / 2), 
+                                radius * this.radiusSize
+                            )
+                        );
                     }
                 }
             }
         }
 
-        Circle currCircle = null;
-        double distance = -1;
-        boolean skip = false;
-
-        while(circles.size() < n){
-            container = pq.poll();
-            if(container == null) break;
-            currCircle = container.getCircle();
-
-            for(Circle prevCircle : circles) {
-                distance = Math.sqrt(
-                    Math.pow(currCircle.getX() - prevCircle.getX(), 2)
-                    +
-                    Math.pow(currCircle.getY() - prevCircle.getY(), 2)
-                );
-            }
-
-            if(!skip){
-                circles.add(currCircle);
-            }
-
-            skip = false;
-        }
-
-        return circles;
+        return candidates;
     }
 
     private int getYCell(int y){
