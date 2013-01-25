@@ -95,17 +95,21 @@ public class HoughTransform {
         }
     }
 
-    public ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles, int neighbors){
-        Circle currCircle = null;
+    /* 
+        Removes circles that is to simiular to nearby circles
+        Max distance between two circles is defined by {this.minCircleDistance}
+        Max diffrence between two radii defined by {this.minRadiusDiff}
+    */
+    private ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles){
+        Circle currCircle                                = null;
         ArrayList<CircleContainer> foundCircleContainers = new ArrayList<CircleContainer>();
-        ArrayList<Circle> foundCircles = new ArrayList<Circle>();
-        double distance = -1;
-        boolean run = true;
-        int bestIndex = 0;
+        ArrayList<Circle> foundCircles                   = new ArrayList<Circle>();
+        double distance                                  = -1;
+        boolean run                                      = true;
+        int bestIndex                                    = 0;
 
         for(CircleContainer container : circles){
             currCircle = container.getCircle();
-
             for (int i = 0; i < foundCircleContainers.size(); i++) {
                 CircleContainer foundCircleContainer = foundCircleContainers.get(i);
                 Circle prevCircle = foundCircleContainer.getCircle();
@@ -142,7 +146,7 @@ public class HoughTransform {
         Render view based on this.pixels
     */
     public void showCanvas() throws IllegalArgumentException {
-        final ArrayList<Circle> circles = this.filterNeighbors(this.pixels.getCandidates(), 30);
+        final ArrayList<Circle> circles = this.filterNeighbors(this.pixels.getCandidates());
         final int width                 = this.width;
         final int height                = this.height;
         final int pointSize             = this.pointSize;
