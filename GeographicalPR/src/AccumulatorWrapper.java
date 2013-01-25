@@ -126,6 +126,18 @@ public class AccumulatorWrapper {
     private int getRCell(int r){
         return (int) ((r - this.minR) / this.radiusSize);
     }
+    
+    public int getXCoord(int xIndex){
+    	return (int) ((xIndex + 0.5) * this.cellSize + minX);
+    }
+    
+    public int getYCoord(int yIndex){
+    	return (int) ((yIndex + 0.5) * this.cellSize + minY);
+    }
+    
+    public int getRCoord(int rIndex){
+    	return (int) ((rIndex + 0.5) * this.radiusSize + minR);
+    }
 
     private int getXSpan(){
         return this.maxX - this.minX;
