@@ -117,7 +117,7 @@ public class HoughTransform {
         JFrame frame                    = new JFrame();
 
         if(circles.isEmpty()){
-            throw new IllegalArgumentException("No circles where found, have you tried running the execute method?");
+            throw new IllegalArgumentException("No circles were found, have you tried running the execute method?");
         }
 
         frame.add(new Canvas(){
@@ -151,7 +151,7 @@ public class HoughTransform {
     }
 
     /*
-        Find every other circle that has @point.getY() and @point.getX() as its center
+        Find every circle that has @point.getY() and @point.getX() as its center
     */
     private ArrayList<Circle> getCircles(Point point){
         ArrayList<Circle> circles = new ArrayList<Circle>();
