@@ -87,9 +87,14 @@ public class HoughTransform {
         Populates this.pixels for later use by this.showCanvas()
     */
     public void execute(){
+        // For every point given by the user
         for (Point point : this.data) {
+            // Find every circle which @point.getX() and @point.getY() lies on
             ArrayList<Circle> circles = this.getCircles(point);
+
+            // For every found circle
             for (Circle circle : circles) {
+                // Give the cell which contains @circle.getX(), @circle.getY() and @circle.getRadius() a +1
                 this.pixels.increment(circle.getX(), circle.getY(), circle.getRadius());
             }
         }
@@ -143,7 +148,7 @@ public class HoughTransform {
     }
 
     /*
-        Find every other circle that has @point.getY() and @point.getX() as it's center
+        Find every other circle that has @point.getY() and @point.getX() as its center
     */
     private ArrayList<Circle> getCircles(Point point){
         ArrayList<Circle> circles = new ArrayList<Circle>();
