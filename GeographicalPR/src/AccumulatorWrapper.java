@@ -13,7 +13,7 @@ public class AccumulatorWrapper {
     private int minR;
     private int r;
     private int[][][] store;
-    private final int threshold = 3000;
+    private final int threshold = 3400;
 
     public AccumulatorWrapper(
         int minX, 
@@ -34,9 +34,9 @@ public class AccumulatorWrapper {
         this.cellSize = cellSize;
         this.radiusSize = radiusSize;
 
-        this.store = new int[this.getAllocationForX()]
-            [this.getAllocationForY()]
-            [this.getAllocationForR()];
+        this.store = new int[this.getAllocationForX() + 1]
+            [this.getAllocationForY() + 1]
+            [this.getAllocationForR() + 1];
     }
 
     private int getAllocationForX(){
@@ -54,10 +54,19 @@ public class AccumulatorWrapper {
 
     public int get(int x, int y, int r) throws IllegalArgumentException {
         try {
+            // System.out.println("--------");
+            // System.out.println(this.getXCell(x));
+            // System.out.println(this.getYCell(y));
+            // System.out.println(this.getRCell(r));
+            // System.out.println("uuuuuuu");
+            // System.out.println(this.getAllocationForX());
+            // System.out.println(this.getAllocationForY());
+            // System.out.println(this.getAllocationForR());
+
             return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
         } catch(ArrayIndexOutOfBoundsException e){
             String error = this.blameVar(x, y, r);
-            throw new IllegalArgumentException(error + " must be inside scoop");
+            throw new IllegalArgumentException(error + " must be inside scoop: " + x + ", " + y + ", " + r);
         }
     }
 
@@ -102,9 +111,9 @@ public class AccumulatorWrapper {
                     if(count > this.threshold){
                         candidates.add(
                             new Circle(
-                                x * (this.cellSize / 2), 
-                                y * (this.cellSize / 2), 
-                                radius * this.radiusSize
+                                this.getXCoord(x),
+                                this.getYCoord(y)
+                                this.getRCoord(radius)
                             )
                         );
                     }

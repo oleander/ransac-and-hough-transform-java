@@ -43,6 +43,11 @@ public class HoughTransform {
         
         HoughTransform h = new HoughTransform(args[0]);
         h.execute();
+        ArrayList<Circle> circles = h.pixels.getCandidates();
+        System.out.println(circles.size());
+        // for (Circle circle : circles) {
+            
+        // }
         h.showCanvas();
     }
 
