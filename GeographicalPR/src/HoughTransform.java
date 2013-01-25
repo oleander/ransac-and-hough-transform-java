@@ -21,10 +21,12 @@ public class HoughTransform {
     /* Max and minimal center y coordinates for the given circles */
     private final int minYCoord          = -200;
     private final int maxYCoord          = 200;
-  
+    
+    /* The size of a cell according to the Hough Transform algorithm */
     private final int radiusSize        = 6;
     private final int cellSize          = 6;
-    private final int neighborhood      = 5;
+
+    /* How close could two circles lie be without being the same circle? */
     private final int minCircleDistance = 20;
     private final int minRadiusDiff     = 20;
 
@@ -33,10 +35,11 @@ public class HoughTransform {
     private final int height            = 800;
     private final int width             = 800;
 
-    private AccumulatorWrapper pixels                = null;
-    private ArrayList<Point> data     = new ArrayList<Point>();
+    private AccumulatorWrapper pixels   = null;
+    private ArrayList<Point> data       = new ArrayList<Point>();
 
     /**
+        Runs the Hough Transform algorithm and renders the result on a canvas
         @args[0] File containing data points
     */
     public static void main(String[] args) throws IllegalArgumentException { 
