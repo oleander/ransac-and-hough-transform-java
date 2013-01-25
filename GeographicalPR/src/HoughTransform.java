@@ -38,7 +38,7 @@ public class HoughTransform {
     private AccumulatorWrapper pixels   = null;
     private ArrayList<Point> data       = new ArrayList<Point>();
     private ArrayList<Circle> circles   = null;
-    private ArrayList<Point> consensusSet = null;
+    private HashMap<Circle, ArrayList<Point>> container = new HashMap<Circle, ArrayList<Point>>();
 
     /**
         Runs the Hough Transform algorithm and renders the result on a canvas
@@ -106,7 +106,7 @@ public class HoughTransform {
 
         this.circles = this.filterNeighbors(this.pixels.getCandidates());
 
-        this.consensusSet = new ArrayList<Point>();
+        ArrayList<Point> consensusSet = new ArrayList<Point>();
         for (Circle circle : this.circles) {
             for (Point point : this.data) {
                 double x1 = circle.getX() + this.cellSize / 2.0;
@@ -114,7 +114,7 @@ public class HoughTransform {
                 double offset = this.getOffset(point, x1, y1);
 
                 if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
-                    this.consensusSet.add(point);
+                    consensusSet.add(point);
                 }
 
                 double x2 = circle.getX() - this.cellSize / 2.0;
@@ -122,7 +122,7 @@ public class HoughTransform {
                 offset = this.getOffset(point, x2, y2);
 
                 if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
-                    this.consensusSet.add(point);
+                    consensusSet.add(point);
                 }
 
                 double x3 = circle.getX() + this.cellSize / 2.0;
@@ -130,7 +130,7 @@ public class HoughTransform {
                 offset = this.getOffset(point, x3, y3);
 
                 if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
-                    this.consensusSet.add(point);
+                    consensusSet.add(point);
                 }
 
 
@@ -139,10 +139,11 @@ public class HoughTransform {
                 offset = this.getOffset(point, x4, y4);
 
                 if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
-                    this.consensusSet.add(point);
+                    consensusSet.add(point);
                 }
-
             }
+
+            this.container.put(circle, consensusSet);
         }
     }
 
@@ -164,7 +165,7 @@ public class HoughTransform {
         final double offsetWidth        = this.width / 2.0;
         final double offsetHeight       = this.height / 2.0;
         final ArrayList<Point> data     = this.data;
-        final ArrayList<Point> consensusSet     = this.consensusSet;
+        final HashMap<Circle, ArrayList<Point>> container = this.container;
         JFrame frame                    = new JFrame();
 
         if(circles.isEmpty()){
@@ -186,23 +187,49 @@ public class HoughTransform {
                     );
                 }
                 
-                g.setColor(Color.RED);
-                for (Circle c : circles) {
-                    g.drawOval(
-                        (int) (c.getX() - c.getRadius() + 0.5),
-                        (int) (c.getY() - c.getRadius() + 0.5),
-                        (int) (2 * c.getRadius()), 
-                        (int) (2 * c.getRadius())
-                    );
-                }
+                for(Circle circle : container.keySet()){
+                    double highestRadius = -1;
+                    double smallestRadius = Double.POSITIVE_INFINITY;
 
-                g.setColor(Color.GREEN);
-                for(Point point : consensusSet){
+                    for(Point point : container.get(circle)){
+                        g.setColor(Color.GREEN);
+                        g.drawOval(
+                            (int) (point.getX() + pointSize / 2.0 + 0.5),
+                            (int) (point.getY() + pointSize / 2.0 + 0.5), 
+                            pointSize, 
+                            pointSize
+                        );
+
+                        double distance = Math.sqrt(
+                            Math.pow(point.getX() - circle.getX(), 2) + 
+                            Math.pow(point.getY() - circle.getY(), 2)
+                        );
+
+                        if(distance > highestRadius) {
+                            highestRadius = distance;
+                        }
+
+                        if(distance < smallestRadius) {
+                            smallestRadius = distance;
+                        }
+                    }
+
+                    g.setColor(Color.GREEN);
                     g.drawOval(
-                        (int) (point.getX() + pointSize / 2.0 + 0.5),
-                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
-                        pointSize, 
-                        pointSize
+                        (int) (circle.getX() - highestRadius + 0.5),
+                        (int) (circle.getY() - highestRadius + 0.5),
+                        (int) (2 * highestRadius), 
+                        (int) (2 * highestRadius)
+                    );
+
+                    System.out.println(highestRadius);
+                    System.out.println(highestRadius);
+                    g.setColor(Color.BLUE);
+                    g.drawOval(
+                        (int) (circle.getX() - smallestRadius + 0.5),
+                        (int) (circle.getY() - smallestRadius + 0.5),
+                        (int) (2 * smallestRadius), 
+                        (int) (2 * smallestRadius)
                     );
                 }
             }
