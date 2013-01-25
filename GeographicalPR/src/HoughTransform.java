@@ -22,8 +22,8 @@ public class HoughTransform {
     private final int minYCord        = -200;
     private final int maxYCord        = 200;
 
-    /* Min amount of distance between each circle */
-    private final int threshold       = 15;
+    private final int radiusSize      = 5;
+    private final int cellSize        = 5; 
 
     /* Number of circles to be found */
     private final int numberOfCircles = 4;
@@ -77,7 +77,8 @@ public class HoughTransform {
             this.maxYCord, 
             this.minRadius,
             this.maxRadius,
-            this.threshold
+            this.cellSize,
+            this.radiusSize
         );
     }
 

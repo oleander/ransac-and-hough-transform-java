@@ -3,49 +3,54 @@ import java.util.*;
  * A wrapper class for the 3D matrix that stores the circles 
  */
 public class AccumulatorWrapper {
+    private double cellSize;
+    private double radiusSize;
     private int minX;
     private int maxX;
     private int minY;
     private int maxY;
     private int maxR;
     private int minR;
-    private int threshold;
     private int r;
     private int[][][] store;
     private final int queueLimit = 10;
 
-
-    public AccumulatorWrapper(int minX, int maxX, int minY, int maxY, int minR, int maxR, int threshold){
+    public AccumulatorWrapper(
+        int minX, 
+        int maxX, 
+        int minY, 
+        int maxY, 
+        int minR, 
+        int maxR, 
+        int cellSize,
+        int radiusSize
+    ){
         this.minR = minR;
         this.maxR = maxR;
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
         this.maxY = maxY;
-        this.threshold = threshold;
-        this.store = new int[this.getXSpan() + 1]
-            [this.getYSpan() + 1]
-            [this.getRSpan() + 1];
-    }
+        this.cellSize = cellSize;
+        this.radiusSize = radiusSize;
 
-    private int getXSpan(){
-        return this.maxX - this.minX;
-    }
+        int x = (int) (this.getXSpan() / this.cellSize + 0.5);
+        int y = (int) (this.getYSpan() / this.cellSize + 0.5);
+        int r = (int) (this.getRSpan() / this.radiusSize + 0.5);
+        
+        System.out.println(x);
+        System.out.println(y);
+        System.out.println(r);
 
-    private int getYSpan(){
-        return this.maxY - this.minY;
-    }
-
-    private int getRSpan(){
-        return this.maxR - this.minR;
+        this.store = new int[x][y][r];
     }
 
     public int get(int x, int y, int r) {
-        return this.store[x - this.minX][y - this.minY][r - this.minR];
+        return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
     }
 
     public void set(int x, int y, int r, int value) {
-        this.store[x - this.minX][y - this.minY][r - this.minR] = value;
+        this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)] = value;
     }
 
     public void increment(int x, int y, int r){
@@ -103,10 +108,6 @@ public class AccumulatorWrapper {
                     +
                     Math.pow(currCircle.getY() - prevCircle.getY(), 2)
                 );
-
-                if(distance < this.threshold) {
-                    skip = true; break;
-                }
             }
 
             if(!skip){
@@ -117,5 +118,29 @@ public class AccumulatorWrapper {
         }
 
         return circles;
+    }
+
+    private int getYCell(int y){
+        return (int) ((y - this.minY - 1) / this.cellSize);
+    }
+
+    private int getXCell(int x){
+        return (int) ((x - this.minX - 1) / this.cellSize);
+    }
+
+    private int getRCell(int r){
+        return (int) ((r - this.minR - 1) / this.radiusSize);
+    }
+
+    private int getXSpan(){
+        return this.maxX - this.minX;
+    }
+
+    private int getYSpan(){
+        return this.maxY - this.minY;
+    }
+
+    private int getRSpan(){
+        return this.maxR - this.minR;
     }
 }
