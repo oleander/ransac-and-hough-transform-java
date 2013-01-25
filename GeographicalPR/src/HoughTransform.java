@@ -182,9 +182,9 @@ public class HoughTransform {
     }
 
     /* 
-        Removes circles that is to simiular to nearby circles
-        Max distance between two circles is defined by {this.minCircleDistance}
-        Max diffrence between two radii defined by {this.minRadiusDiff}
+         Removes circles that are too similar to nearby circles
+		 Max distance between two circles is defined by {this.minCircleDistance}
+		 Max difference between two radii defined by {this.minRadiusDiff}
     */
     private ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles){
         Circle currCircle                                = null;
