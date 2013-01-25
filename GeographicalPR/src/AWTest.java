@@ -67,6 +67,23 @@ public class AWTest extends TestCase {
 		assertEquals(125, aw.get(10, 10, 40));
 	}
 	
+	public void testConvertIndexToXCoord(){
+		
+		assertEquals(-7, aw.getXCoord(0));
+		assertEquals(12, aw.getXCoord(4));
+	}
+	
+	public void testConvertIndexToYCoord(){
+		
+		assertEquals(-7, aw.getYCoord(0));
+		assertEquals(12, aw.getYCoord(4));
+	}
+	
+	public void testConvertIndexToRCoord(){
+		
+		assertEquals(22, aw.getRCoord(0));
+		assertEquals(27, aw.getRCoord(1));
+	} 
 	
 
 
