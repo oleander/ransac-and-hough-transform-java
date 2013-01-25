@@ -176,7 +176,8 @@ public class RANSAC {
 
                 Point point = this.data.get(j);
                 double offset = this.getOffset(point, maybeCircle);
-
+                
+                // If this point is close enough to the circle, add it to the set
                 if(offset < this.threshold){
                     // consensus_set := maybe_inliers
                     consensusSet.add(point);
@@ -184,7 +185,7 @@ public class RANSAC {
                     if(consensusSet.size() > this.sufficientSize) { break; }
                 }
             }
-
+            //Keep track of the best model so far
             if(consensusSet.size() > bestConsensusSet.size()){
                 bestConsensusSet = consensusSet;
                 bestCircle = maybeCircle;
@@ -202,7 +203,8 @@ public class RANSAC {
         double y1 = point.getY();
         double x2 = circle.getX();
         double y2 = circle.getY();
-
+        
+        //Pythagorean theorem
         double hyp = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
         return Math.abs(circle.getRadius() - hyp);
     }
