@@ -17,9 +17,6 @@ Java implementation of the Hough transform and RANSAC algorithm
 - showCanvas draws the data points, the best circle and the smallest width annulus on a canvas and displays the result to the user
 
 
-
-We start by choosing 3 random points from the data set and construct a circle that passes through them. Then we add all other points that are within a given distance from the circle's circumference. We repeat this procedure maxIter times, while keeping track of the highest number of points for a circle so far. When the iterations have finished, the circle with highest number of points is chosen as the best model.
-
 ### Methods
 
 - (+) showCanvas() *Displays the data points and the calculated circles on a canvas.*
@@ -57,9 +54,8 @@ Points from *points.r.data* are being used.
 - filterNeighbours removes circles that lie too close to each other. Circles with a high count are preferred.
 - showCanvas draws the points and the identified circles 
 
+The smallest width annuli for the Hough circle suffers from some offset problems, possibly caused by rounding errors.
 
-
-A 3D array - the accumulator - is used to store information about potential circles. The parameters are the x and y coordiantes of the center point and the radius For every point in the data set, the value of every cell that could represent the circle that passes through the point is incremented. Cells that exceed a certain threshold are chosen as candidate circles. ??????????????????????????????????????????
 
 ### Methods
 
