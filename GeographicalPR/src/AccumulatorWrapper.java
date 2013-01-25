@@ -13,7 +13,7 @@ public class AccumulatorWrapper {
     private int minR;
     private int r;
     private int[][][] store;
-    private final int threshold = 3400;
+    private final int threshold = 3000;
 
     public AccumulatorWrapper(
         int minX, 
@@ -112,7 +112,7 @@ public class AccumulatorWrapper {
                         candidates.add(
                             new Circle(
                                 this.getXCoord(x),
-                                this.getYCoord(y)
+                                this.getYCoord(y),
                                 this.getRCoord(radius)
                             )
                         );
