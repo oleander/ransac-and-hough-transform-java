@@ -11,25 +11,27 @@ import java.lang.IllegalArgumentException;
 
 public class HoughTransform {
     /* Max and minimal radius of the circles we want to find */
-    private final int minRadius       = 30;
-    private final int maxRadius       = 130;
+    private final int minRadius         = 30;
+    private final int maxRadius         = 130;
     
     /* Max and minimal center x coordinates for the given circles */
-    private final int minXCord        = -200;
-    private final int maxXCord        = 200;
+    private final int minXCord          = -200;
+    private final int maxXCord          = 200;
       
     /* Max and minimal center y coordinates for the given circles */
-    private final int minYCord        = -200;
-    private final int maxYCord        = 200;
-
-    private final int radiusSize      = 6;
-    private final int cellSize        = 6;
-    private final int neighborhood    = 5;
+    private final int minYCord          = -200;
+    private final int maxYCord          = 200;
+  
+    private final int radiusSize        = 6;
+    private final int cellSize          = 6;
+    private final int neighborhood      = 5;
+    private final int minCircleDistance = 20;
+    private final int minRadiusDiff     = 20;
 
     /* View related */
-    private final int pointSize       = 4;
-    private final int height          = 800;
-    private final int width           = 800;
+    private final int pointSize         = 4;
+    private final int height            = 800;
+    private final int width             = 800;
 
     private AccumulatorWrapper pixels                = null;
     private ArrayList<Point> data     = new ArrayList<Point>();
@@ -95,18 +97,17 @@ public class HoughTransform {
 
     public ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles, int neighbors){
         Circle currCircle = null;
-        ArrayList<CircleContainer> foundCircles = new ArrayList<CircleContainer>();
-        ArrayList<Circle> u = new ArrayList<Circle>();
+        ArrayList<CircleContainer> foundCircleContainers = new ArrayList<CircleContainer>();
+        ArrayList<Circle> foundCircles = new ArrayList<Circle>();
         double distance = -1;
         boolean run = true;
         int bestIndex = 0;
 
         for(CircleContainer container : circles){
-            double bestDistance = 1000000.0; // Fix!
             currCircle = container.getCircle();
 
-            for (int i = 0; i < foundCircles.size(); i++) {
-                CircleContainer foundCircleContainer = foundCircles.get(i);
+            for (int i = 0; i < foundCircleContainers.size(); i++) {
+                CircleContainer foundCircleContainer = foundCircleContainers.get(i);
                 Circle prevCircle = foundCircleContainer.getCircle();
                 distance = Math.sqrt(
                     Math.pow(currCircle.getX() - prevCircle.getX(), 2)
@@ -115,8 +116,7 @@ public class HoughTransform {
                 );
 
                 int rDiff = Math.abs(prevCircle.getRadius() - currCircle.getRadius());
-                int y = 20;
-                if(distance < y && rDiff < y) {
+                if(distance < this.minCircleDistance && rDiff < this.minRadiusDiff) {
                     if(container.getCount() > foundCircleContainer.getCount()) {
                         bestIndex = i;
                         run = true;
@@ -126,16 +126,16 @@ public class HoughTransform {
             }
 
             if(run){
-                foundCircles.add(bestIndex, container);
+                foundCircleContainers.add(bestIndex, container);
             }
 
             run = true;
         }
 
-        for (CircleContainer p : foundCircles) {
-            u.add(p.getCircle());
+        for (CircleContainer p : foundCircleContainers) {
+            foundCircles.add(p.getCircle());
         }
-        return u;
+        return foundCircles;
     }
 
     /**
