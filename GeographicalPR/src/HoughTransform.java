@@ -190,7 +190,7 @@ public class HoughTransform {
     }
 
     /*
-        Find every other circle that has @point.getY() and @point.getX() as its center
+        Find every circle that has @point.getY() and @point.getX() as its center
     */
     private ArrayList<Circle> getCircles(Point point){
         ArrayList<Circle> circles = new ArrayList<Circle>();
