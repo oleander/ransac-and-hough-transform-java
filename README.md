@@ -4,6 +4,20 @@ Java implementation of the Hough transform and RANSAC algorithm
 
 ## RANSAC
 
+- The constructor reads the data points from a text file into a list
+- showCanvas calls execute
+	- for (maxIter iterations)
+		- The execute method chooses 3 points from the data list at random. Their indeces are stored in the concensusSet.
+		- A circle that passes through all 3 points is chosen as the current circle model
+		for (all points in the data set)
+			- getoffset is responsible for calculating the difference between the points and the circumference of the circle
+			- Points that are within *threshold* distance are added to the consenus set 
+		- The best model so far (as determined by the highest number of points in the consenus set) is kept track on during the iteration
+	- The best model is returned
+- showCanvas draws the data points, the best circle and the smallest width annulus on a canvas and displays the result to the user
+
+
+
 We start by choosing 3 random points from the data set and construct a circle that passes through them. Then we add all other points that are within a given distance from the circle's circumference. We repeat this procedure maxIter times, while keeping track of the highest number of points for a circle so far. When the iterations have finished, the circle with highest number of points is chosen as the best model.
 
 ### Methods
