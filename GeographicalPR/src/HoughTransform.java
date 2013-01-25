@@ -37,6 +37,8 @@ public class HoughTransform {
 
     private AccumulatorWrapper pixels   = null;
     private ArrayList<Point> data       = new ArrayList<Point>();
+    private ArrayList<Circle> circles   = null;
+    private ArrayList<Point> consensusSet = null;
 
     /**
         Runs the Hough Transform algorithm and renders the result on a canvas
@@ -101,19 +103,68 @@ public class HoughTransform {
                 this.pixels.increment(circle.getX(), circle.getY(), circle.getRadius());
             }
         }
+
+        this.circles = this.filterNeighbors(this.pixels.getCandidates());
+
+        this.consensusSet = new ArrayList<Point>();
+        for (Circle circle : this.circles) {
+            for (Point point : this.data) {
+                double x1 = circle.getX() + this.cellSize / 2.0;
+                double y1 = circle.getY() + this.cellSize / 2.0;
+                double offset = this.getOffset(point, x1, y1);
+
+                if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
+                    this.consensusSet.add(point);
+                }
+
+                double x2 = circle.getX() - this.cellSize / 2.0;
+                double y2 = circle.getY() + this.cellSize / 2.0;
+                offset = this.getOffset(point, x2, y2);
+
+                if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
+                    this.consensusSet.add(point);
+                }
+
+                double x3 = circle.getX() + this.cellSize / 2.0;
+                double y3 = circle.getY() - this.cellSize / 2.0;
+                offset = this.getOffset(point, x3, y3);
+
+                if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
+                    this.consensusSet.add(point);
+                }
+
+
+                double x4 = circle.getX() - this.cellSize / 2.0;
+                double y4 = circle.getY() - this.cellSize / 2.0;
+                offset = this.getOffset(point, x4, y4);
+
+                if(Math.abs(circle.getRadius() - offset) <= (this.radiusSize / 2.0)){
+                    this.consensusSet.add(point);
+                }
+
+            }
+        }
     }
 
+    private double getOffset(Point point, double x2, double y2) {
+        double x1 = point.getX();
+        double y1 = point.getY();
+        
+        //Pythagorean theorem
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    } 
     /**
         Render view based on this.pixels
     */
     public void showCanvas() throws IllegalArgumentException {
-        final ArrayList<Circle> circles = this.filterNeighbors(this.pixels.getCandidates());
+        final ArrayList<Circle> circles = this.circles;
         final int width                 = this.width;
         final int height                = this.height;
         final int pointSize             = this.pointSize;
         final double offsetWidth        = this.width / 2.0;
         final double offsetHeight       = this.height / 2.0;
         final ArrayList<Point> data     = this.data;
+        final ArrayList<Point> consensusSet     = this.consensusSet;
         JFrame frame                    = new JFrame();
 
         if(circles.isEmpty()){
@@ -135,13 +186,23 @@ public class HoughTransform {
                     );
                 }
                 
+                g.setColor(Color.RED);
                 for (Circle c : circles) {
-                    g.setColor(Color.RED);
                     g.drawOval(
                         (int) (c.getX() - c.getRadius() + 0.5),
                         (int) (c.getY() - c.getRadius() + 0.5),
                         (int) (2 * c.getRadius()), 
                         (int) (2 * c.getRadius())
+                    );
+                }
+
+                g.setColor(Color.GREEN);
+                for(Point point : consensusSet){
+                    g.drawOval(
+                        (int) (point.getX() + pointSize / 2.0 + 0.5),
+                        (int) (point.getY() + pointSize / 2.0 + 0.5), 
+                        pointSize, 
+                        pointSize
                     );
                 }
             }
