@@ -52,6 +52,7 @@ public class AccumulatorWrapper {
     }
 
     public int get(int x, int y, int r) {
+    	System.out.println(this.getRCell(r));
         return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
     }
 

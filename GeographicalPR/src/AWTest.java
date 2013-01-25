@@ -12,9 +12,19 @@ public class AWTest extends TestCase {
 		aw = new AccumulatorWrapper(-10, 10, -10, 10, 20, 50, 5, 5);
 	}
 	
+
 	public void testInitGet(){
 		
-		assertEquals(aw.get(0, 0, 0), 0);
+		try {
+			aw.get(0, 0, 0);
+		} catch(IllegalArgumentException e){
+			assertTrue(false);
+		}
+		
+			
+		
+		
+		
 	}
 
 }
