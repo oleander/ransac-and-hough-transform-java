@@ -3,7 +3,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class AWTest extends TestCase {
-	
+
 	
 	
 	private AccumulatorWrapper aw;
@@ -26,5 +26,6 @@ public class AWTest extends TestCase {
 		
 		
 	}
+
 
 }
