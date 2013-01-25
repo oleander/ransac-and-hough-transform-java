@@ -95,53 +95,6 @@ public class HoughTransform {
         }
     }
 
-    /* 
-        Removes circles that is to simiular to nearby circles
-        Max distance between two circles is defined by {this.minCircleDistance}
-        Max diffrence between two radii defined by {this.minRadiusDiff}
-    */
-    private ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles){
-        Circle currCircle                                = null;
-        ArrayList<CircleContainer> foundCircleContainers = new ArrayList<CircleContainer>();
-        ArrayList<Circle> foundCircles                   = new ArrayList<Circle>();
-        double distance                                  = -1;
-        boolean run                                      = true;
-        int bestIndex                                    = 0;
-
-        for(CircleContainer container : circles){
-            currCircle = container.getCircle();
-            for (int i = 0; i < foundCircleContainers.size(); i++) {
-                CircleContainer foundCircleContainer = foundCircleContainers.get(i);
-                Circle prevCircle = foundCircleContainer.getCircle();
-                distance = Math.sqrt(
-                    Math.pow(currCircle.getX() - prevCircle.getX(), 2)
-                    +
-                    Math.pow(currCircle.getY() - prevCircle.getY(), 2)
-                );
-
-                int rDiff = Math.abs(prevCircle.getRadius() - currCircle.getRadius());
-                if(distance < this.minCircleDistance && rDiff < this.minRadiusDiff) {
-                    if(container.getCount() > foundCircleContainer.getCount()) {
-                        bestIndex = i;
-                        run = true;
-                    }
-                    run = false;
-                }
-            }
-
-            if(run){
-                foundCircleContainers.add(bestIndex, container);
-            }
-
-            run = true;
-        }
-
-        for (CircleContainer p : foundCircleContainers) {
-            foundCircles.add(p.getCircle());
-        }
-        return foundCircles;
-    }
-
     /**
         Render view based on this.pixels
     */
@@ -218,5 +171,60 @@ public class HoughTransform {
             }
         }
         return circles;
+    }
+
+    /* 
+        Removes circles that is to simiular to nearby circles
+        Max distance between two circles is defined by {this.minCircleDistance}
+        Max diffrence between two radii defined by {this.minRadiusDiff}
+    */
+    private ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles){
+        Circle currCircle                                = null;
+        ArrayList<CircleContainer> foundCircleContainers = new ArrayList<CircleContainer>();
+        ArrayList<Circle> foundCircles                   = new ArrayList<Circle>();
+        double distance                                  = -1;
+        boolean run                                      = true;
+        int bestIndex                                    = 0;
+
+        for(CircleContainer container : circles){
+            currCircle = container.getCircle();
+            for (int i = 0; i < foundCircleContainers.size(); i++) {
+                CircleContainer foundCircleContainer = foundCircleContainers.get(i);
+                Circle prevCircle = foundCircleContainer.getCircle();
+
+                // The distance between two circles
+                distance = Math.sqrt(
+                    Math.pow(currCircle.getX() - prevCircle.getX(), 2)
+                    +
+                    Math.pow(currCircle.getY() - prevCircle.getY(), 2)
+                );
+
+                // Diffrence in length between two circles
+                int rDiff = Math.abs(prevCircle.getRadius() - currCircle.getRadius());
+
+                // Are the two circles similar?
+                if(distance < this.minCircleDistance && rDiff < this.minRadiusDiff) {
+                    // Should we swap the current circle with the one we found now?
+                    if(container.getCount() > foundCircleContainer.getCount()) {
+                        bestIndex = i;
+                        run = true;
+                    }
+
+                    // Do not add this circle to the list of good circles
+                    run = false;
+                }
+            }
+
+            if(run){
+                foundCircleContainers.add(bestIndex, container);
+            }
+
+            run = true;
+        }
+        
+        for (CircleContainer p : foundCircleContainers) {
+            foundCircles.add(p.getCircle());
+        }
+        return foundCircles;
     }
 }
