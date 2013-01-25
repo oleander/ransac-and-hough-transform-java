@@ -51,12 +51,22 @@ public class AccumulatorWrapper {
         return (int) (this.getRSpan() / this.radiusSize + 0.5);
     }
 
-    public int get(int x, int y, int r) {
-        return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
+    public int get(int x, int y, int r) throws IllegalArgumentException {
+        try {
+            return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
+        } catch(ArrayIndexOutOfBoundsException e){
+            String error = this.blameVar(x, y, r);
+            throw new IllegalArgumentException(error + " must be inside scoop");
+        }
     }
 
     public void set(int x, int y, int r, int value) {
-        this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)] = value;
+        try {
+            this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)] = value;
+        } catch(ArrayIndexOutOfBoundsException e){
+            String error = this.blameVar(x, y, r);
+            throw new IllegalArgumentException(error + " must be inside scoop");
+        }
     }
 
     public void increment(int x, int y, int r){
@@ -126,5 +136,15 @@ public class AccumulatorWrapper {
 
     private int getRSpan(){
         return this.maxR - this.minR;
+    }
+
+    private String blameVar(int x, int y, int r){
+        if(this.getXCell(x) < 0 || this.getXCell(x) > this.getAllocationForX()){
+            return "x";
+        } else if (this.getXCell(y) < 0 || this.getYCell(y) > this.getAllocationForY())
+            return "y";
+        else {
+            return "r";
+        }
     }
 }
