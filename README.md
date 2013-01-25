@@ -4,6 +4,20 @@ Java implementation of the Hough transform and RANSAC algorithm
 
 ## RANSAC
 
+- The constructor reads the data points from a text file into a list
+- showCanvas calls execute
+	- for (maxIter iterations)
+		- The execute method chooses 3 points from the data list at random. Their indices are stored in the concensusSet.
+		- A circle that passes through all 3 points is chosen as the current circle model
+		for (all points in the data set)
+			- getoffset is responsible for calculating the difference between the points and the circumference of the circle
+			- Points that are within *threshold* distance are added to the consenus set 
+		- The best model so far (as determined by the highest number of points in the consenus set) is kept track on during the iteration
+	- The best model is returned
+- showCanvas draws the data points, the best circle and the smallest width annulus on a canvas and displays the result to the user
+
+
+
 We start by choosing 3 random points from the data set and construct a circle that passes through them. Then we add all other points that are within a given distance from the circle's circumference. We repeat this procedure maxIter times, while keeping track of the highest number of points for a circle so far. When the iterations have finished, the circle with highest number of points is chosen as the best model.
 
 ### Methods
@@ -20,7 +34,7 @@ Points from *points.r.data* are being used.
 
 - Cirlces (x, y, r, number of points)
   - 20, 100, 100, 100
-- Noice: 900 points randomly selected between -200 and 200
+- Noise: 900 points randomly selected between -200 and 200
 - smallestRadius=92.17273473900397
 - highestRadius=111.01668853035679
 - 18.843953791352817
@@ -32,6 +46,18 @@ Points from *points.r.data* are being used.
 ![PS3](http://i.imgur.com/RR8M50p.png)
 
 ## Hough Transform
+
+- The constructor reads the data points from a text file into a list
+- A wrapped 3D array - the accumulator - is used to store information about potential circles. A circle is identified by pixel ranges for x, y and radius
+- execute()
+	- for (all points)
+		- all circles that could have *point* on its circumference are calculated
+		- for (all circles)
+			- the cell in the accumulator is incremented for the given circle
+- filterNeighbours removes circles that lie too close to each other. Circles with a high count are preferred.
+- showCanvas draws the points and the identified circles 
+
+
 
 A 3D array - the accumulator - is used to store information about potential circles. The parameters are the x and y coordiantes of the center point and the radius For every point in the data set, the value of every cell that could represent the circle that passes through the point is incremented. Cells that exceed a certain threshold are chosen as candidate circles. ??????????????????????????????????????????
 
@@ -45,11 +71,11 @@ A 3D array - the accumulator - is used to store information about potential circ
 
 Points from *points.ht.data* are being used.
 
-- Cirlces (x, y, r, number of points)
+- Circles (x, y, r, number of points)
   - 0, 0, 50, 50
   - 100, 140, 110, 50
   - 0, 50, 50, 50
   - 20, 100, 100, 100
-- Noice: 120 points randomly selected between -200 and 200
+- Noise: 120 points randomly selected between -200 and 200
 
 ![PS1](http://i.imgur.com/rYqX67O.png)

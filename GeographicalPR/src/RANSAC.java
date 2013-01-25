@@ -254,7 +254,7 @@ public class RANSAC {
     }
     
     // Representation of the circle model with corresponding consensus set
-    private class RANSACResult {
+    public class RANSACResult {
       private Circle circle;
       private ArrayList<Point> consensusSet;
 
