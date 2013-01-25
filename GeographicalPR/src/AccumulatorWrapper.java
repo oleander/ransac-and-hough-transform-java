@@ -13,8 +13,20 @@ public class AccumulatorWrapper {
     private int minR;
     private int r;
     private int[][][] store;
+
+    /* Remove all models which count is lower */
     private final int threshold = 1100;
 
+    /**
+        @minX Min x coordinate that needs to be stored
+        @maxX Max x coordinate that needs to be stored
+        @minY Min x coordinate that needs to be stored
+        @maxY Max x coordinate that needs to be stored
+        @minR Min radius that needs to be stored. Can NOT be negative.
+        @maxR Max radius that needs to be stored. Can NOT be negative.
+        @cellSize The size of a cell according to the Hough Transform algorithm
+        @radiusSize The size of a radius cell according to the Hough Transform algorithm
+    **/
     public AccumulatorWrapper(
         int minX, 
         int maxX, 
@@ -39,18 +51,11 @@ public class AccumulatorWrapper {
             [this.getAllocationForR()];
     }
 
-    private int getAllocationForX(){
-        return (int) (this.getXSpan() / this.cellSize + 0.5) + 1;
-    }
-
-    private int getAllocationForY(){
-        return (int) (this.getYSpan() / this.cellSize + 0.5) + 1;
-    }
-
-    private int getAllocationForR(){
-        return (int) (this.getRSpan() / this.radiusSize + 0.5) + 1;
-    }
-
+    /**
+        Get the count for particular model
+        @x, @y and @r represents the model
+        Throws an IllegalArgumentException if an invalid model is passed
+    **/
     public int get(int x, int y, int r) throws IllegalArgumentException {
         try {
             return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
@@ -59,6 +64,12 @@ public class AccumulatorWrapper {
         }
     }
 
+    /**
+        Set the count for a particular model
+        @x, @y and @r represents the model
+        @value Value to be stored
+        Throws an IllegalArgumentException if an invalid model is passed
+    **/
     public void set(int x, int y, int r, int value) {
         try {
             this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)] = value;
@@ -67,6 +78,12 @@ public class AccumulatorWrapper {
         }
     }
 
+    /**
+        Increment the count for a particular model {x}, {y}, and {r}
+        @x X coordinate to be incremented
+        @y Y coordinate to be incremented
+        @r Radius to be incremented
+    **/
     public void increment(int x, int y, int r){
         int count = this.get(x, y, r);
         this.set(x, y, r, count + 1);
@@ -79,12 +96,17 @@ public class AccumulatorWrapper {
      */
     public ArrayList<CircleContainer> getCandidates(){
         ArrayList<CircleContainer> candidates = new ArrayList<CircleContainer>();
-                
+        /* Iterate over all values in {this.store} */
         for (int x = 0; x < this.getAllocationForX() - 1; x++) {
             for (int y = 0; y < this.getAllocationForY() - 1; y++) {
                 for (int radius = 0; radius < this.getAllocationForR() - 1; radius++) {
+
+                    /* Get count for the given model */
                     int count = this.store[x][y][radius];
+
+                    /* Remove all models which count is to low according to {this.threshold} */
                     if(count > this.threshold){
+                        /* Store model and count for later use */
                         candidates.add(
                             new CircleContainer(
                                 new Circle(
@@ -149,5 +171,17 @@ public class AccumulatorWrapper {
         }
 
         return error + " must be inside scoop: " + x + ", " + y + ", " + r;
+    }
+
+    private int getAllocationForX(){
+        return (int) (this.getXSpan() / this.cellSize + 0.5) + 1;
+    }
+
+    private int getAllocationForY(){
+        return (int) (this.getYSpan() / this.cellSize + 0.5) + 1;
+    }
+
+    private int getAllocationForR(){
+        return (int) (this.getRSpan() / this.radiusSize + 0.5) + 1;
     }
 }
