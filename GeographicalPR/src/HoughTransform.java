@@ -22,8 +22,9 @@ public class HoughTransform {
     private final int minYCord        = -200;
     private final int maxYCord        = 200;
 
-    private final int radiusSize      = 10;
-    private final int cellSize        = 10; 
+    private final int radiusSize      = 6;
+    private final int cellSize        = 6;
+    private final int neighborhood    = 5;
 
     /* View related */
     private final int pointSize       = 4;
@@ -43,11 +44,6 @@ public class HoughTransform {
         
         HoughTransform h = new HoughTransform(args[0]);
         h.execute();
-        ArrayList<Circle> circles = h.pixels.getCandidates();
-        System.out.println(circles.size());
-        // for (Circle circle : circles) {
-            
-        // }
         h.showCanvas();
     }
 
@@ -97,11 +93,56 @@ public class HoughTransform {
         }
     }
 
+    public ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles, int neighbors){
+        Circle currCircle = null;
+        ArrayList<CircleContainer> foundCircles = new ArrayList<CircleContainer>();
+        ArrayList<Circle> u = new ArrayList<Circle>();
+        double distance = -1;
+        boolean run = true;
+        int bestIndex = 0;
+
+        for(CircleContainer container : circles){
+            double bestDistance = 1000000.0; // Fix!
+            currCircle = container.getCircle();
+
+            for (int i = 0; i < foundCircles.size(); i++) {
+                CircleContainer foundCircleContainer = foundCircles.get(i);
+                Circle prevCircle = foundCircleContainer.getCircle();
+                distance = Math.sqrt(
+                    Math.pow(currCircle.getX() - prevCircle.getX(), 2)
+                    +
+                    Math.pow(currCircle.getY() - prevCircle.getY(), 2)
+                );
+
+                int rDiff = Math.abs(prevCircle.getRadius() - currCircle.getRadius());
+                int y = 20;
+                if(distance < y && rDiff < y) {
+                    if(container.getCount() > foundCircleContainer.getCount()) {
+                        bestIndex = i;
+                        run = true;
+                    }
+                    run = false;
+                }
+            }
+
+            if(run){
+                foundCircles.add(bestIndex, container);
+            }
+
+            run = true;
+        }
+
+        for (CircleContainer p : foundCircles) {
+            u.add(p.getCircle());
+        }
+        return u;
+    }
+
     /**
         Render view based on this.pixels
     */
     public void showCanvas() throws IllegalArgumentException {
-        final ArrayList<Circle> circles = this.pixels.getCandidates();
+        final ArrayList<Circle> circles = this.filterNeighbors(this.pixels.getCandidates(), 30);
         final int width                 = this.width;
         final int height                = this.height;
         final int pointSize             = this.pointSize;

@@ -13,7 +13,7 @@ public class AccumulatorWrapper {
     private int minR;
     private int r;
     private int[][][] store;
-    private final int threshold = 3000;
+    private final int threshold = 1100;
 
     public AccumulatorWrapper(
         int minX, 
@@ -34,39 +34,28 @@ public class AccumulatorWrapper {
         this.cellSize = cellSize;
         this.radiusSize = radiusSize;
 
-        this.store = new int[this.getAllocationForX() + 1]
-            [this.getAllocationForY() + 1]
-            [this.getAllocationForR() + 1];
+        this.store = new int[this.getAllocationForX()]
+            [this.getAllocationForY()]
+            [this.getAllocationForR()];
     }
 
     private int getAllocationForX(){
-        return (int) (this.getXSpan() / this.cellSize + 0.5);
+        return (int) (this.getXSpan() / this.cellSize + 0.5) + 1;
     }
 
     private int getAllocationForY(){
-        return (int) (this.getYSpan() / this.cellSize + 0.5);
+        return (int) (this.getYSpan() / this.cellSize + 0.5) + 1;
     }
 
     private int getAllocationForR(){
-        return (int) (this.getRSpan() / this.radiusSize + 0.5);
+        return (int) (this.getRSpan() / this.radiusSize + 0.5) + 1;
     }
-
 
     public int get(int x, int y, int r) throws IllegalArgumentException {
         try {
-            // System.out.println("--------");
-            // System.out.println(this.getXCell(x));
-            // System.out.println(this.getYCell(y));
-            // System.out.println(this.getRCell(r));
-            // System.out.println("uuuuuuu");
-            // System.out.println(this.getAllocationForX());
-            // System.out.println(this.getAllocationForY());
-            // System.out.println(this.getAllocationForR());
-
             return  this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)];
         } catch(ArrayIndexOutOfBoundsException e){
-            String error = this.blameVar(x, y, r);
-            throw new IllegalArgumentException(error + " must be inside scoop: " + x + ", " + y + ", " + r);
+            throw new IllegalArgumentException(this.blameVar(x, y, r));
         }
     }
 
@@ -74,8 +63,7 @@ public class AccumulatorWrapper {
         try {
             this.store[this.getXCell(x)][this.getYCell(y)][this.getRCell(r)] = value;
         } catch(ArrayIndexOutOfBoundsException e){
-            String error = this.blameVar(x, y, r);
-            throw new IllegalArgumentException(error + " must be inside scoop");
+            throw new IllegalArgumentException(this.blameVar(x, y, r));
         }
     }
 
@@ -83,44 +71,34 @@ public class AccumulatorWrapper {
         int count = this.get(x, y, r);
         this.set(x, y, r, count + 1);
     }
-
-    public int getProperX(int x) {
-        return x + this.minX;
-    }
-
-    public int getProperR(int r) {
-        return r + this.minR;
-    }
-
-    public int getProperY(int y){
-        return y + this.minY;
-    }
     
     /**
      * Finds the circles with the highest score 
      * @param the number of models to return
      * @return a list containing the top n models
      */
-    public ArrayList<Circle> getCandidates(){
-        ArrayList<Circle> candidates = new ArrayList<Circle>();
+    public ArrayList<CircleContainer> getCandidates(){
+        ArrayList<CircleContainer> candidates = new ArrayList<CircleContainer>();
                 
-        for (int x = 0; x < this.getAllocationForX(); x++) {
-            for (int y = 0; y < this.getAllocationForY(); y++) {
-                for (int radius = 0; radius < this.getAllocationForR(); radius++) {
+        for (int x = 0; x < this.getAllocationForX() - 1; x++) {
+            for (int y = 0; y < this.getAllocationForY() - 1; y++) {
+                for (int radius = 0; radius < this.getAllocationForR() - 1; radius++) {
                     int count = this.store[x][y][radius];
                     if(count > this.threshold){
                         candidates.add(
-                            new Circle(
-                                this.getXCoord(x),
-                                this.getYCoord(y),
-                                this.getRCoord(radius)
+                            new CircleContainer(
+                                new Circle(
+                                    this.getXCoord(x),
+                                    this.getYCoord(y),
+                                    this.getRCoord(radius)
+                                ),
+                                count
                             )
                         );
                     }
                 }
             }
         }
-
         return candidates;
     }
 
@@ -137,15 +115,15 @@ public class AccumulatorWrapper {
     }
     
     public int getXCoord(int xIndex){
-    	return (int) ((xIndex + 0.5) * this.cellSize + minX);
+        return (int) ((xIndex + 0.5) * this.cellSize + minX);
     }
-    
+
     public int getYCoord(int yIndex){
-    	return (int) ((yIndex + 0.5) * this.cellSize + minY);
+        return (int) ((yIndex + 0.5) * this.cellSize + minY);
     }
     
     public int getRCoord(int rIndex){
-    	return (int) ((rIndex + 0.5) * this.radiusSize + minR);
+        return (int) ((rIndex + 0.5) * this.radiusSize + minR);
     }
 
     private int getXSpan(){
@@ -161,12 +139,15 @@ public class AccumulatorWrapper {
     }
 
     private String blameVar(int x, int y, int r){
+        String error = null;
         if(this.getXCell(x) < 0 || this.getXCell(x) > this.getAllocationForX()){
-            return "x";
+            error = "x";
         } else if (this.getXCell(y) < 0 || this.getYCell(y) > this.getAllocationForY())
-            return "y";
+            error = "y";
         else {
-            return "r";
+            error = "r";
         }
+
+        return error + " must be inside scoop: " + x + ", " + y + ", " + r;
     }
 }
