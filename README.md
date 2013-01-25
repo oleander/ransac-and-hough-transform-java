@@ -7,7 +7,7 @@ Java implementation of the Hough transform and RANSAC algorithm
 - The constructor reads the data points from a text file into a list
 - showCanvas calls execute
 	- for (maxIter iterations)
-		- The execute method chooses 3 points from the data list at random. Their indeces are stored in the concensusSet.
+		- The execute method chooses 3 points from the data list at random. Their indices are stored in the concensusSet.
 		- A circle that passes through all 3 points is chosen as the current circle model
 		for (all points in the data set)
 			- getoffset is responsible for calculating the difference between the points and the circumference of the circle
@@ -34,7 +34,7 @@ Points from *points.r.data* are being used.
 
 - Cirlces (x, y, r, number of points)
   - 20, 100, 100, 100
-- Noice: 900 points randomly selected between -200 and 200
+- Noise: 900 points randomly selected between -200 and 200
 - smallestRadius=92.17273473900397
 - highestRadius=111.01668853035679
 - 18.843953791352817
@@ -46,6 +46,18 @@ Points from *points.r.data* are being used.
 ![PS3](http://i.imgur.com/RR8M50p.png)
 
 ## Hough Transform
+
+- The constructor reads the data points from a text file into a list
+- A wrapped 3D array - the accumulator - is used to store information about potential circles. A circle is identified by pixel ranges for x, y and radius
+- execute()
+	- for (all points)
+		- all circles that could have *point* on its circumference are calculated
+		- for (all circles)
+			- the cell in the accumulator is incremented for the given circle
+- filterNeighbours removes circles that lie too close to each other. Circles with a high count are preferred.
+- showCanvas draws the points and the identified circles 
+
+
 
 A 3D array - the accumulator - is used to store information about potential circles. The parameters are the x and y coordiantes of the center point and the radius For every point in the data set, the value of every cell that could represent the circle that passes through the point is incremented. Cells that exceed a certain threshold are chosen as candidate circles. ??????????????????????????????????????????
 
