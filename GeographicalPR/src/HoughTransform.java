@@ -96,9 +96,9 @@ public class HoughTransform {
     }
 
     /* 
-        Removes circles that is to simiular to nearby circles
+        Removes circles that are too similar to nearby circles
         Max distance between two circles is defined by {this.minCircleDistance}
-        Max diffrence between two radii defined by {this.minRadiusDiff}
+        Max difference between two radii defined by {this.minRadiusDiff}
     */
     private ArrayList<Circle> filterNeighbors(ArrayList<CircleContainer> circles){
         Circle currCircle                                = null;
@@ -156,7 +156,7 @@ public class HoughTransform {
         JFrame frame                    = new JFrame();
 
         if(circles.isEmpty()){
-            throw new IllegalArgumentException("No circles where found, have you tried running the execute method?");
+            throw new IllegalArgumentException("No circles were found, have you tried running the execute method?");
         }
 
         frame.add(new Canvas(){
@@ -190,7 +190,7 @@ public class HoughTransform {
     }
 
     /*
-        Find every other circle that has @point.getY() and @point.getX() as it's center
+        Find every other circle that has @point.getY() and @point.getX() as its center
     */
     private ArrayList<Circle> getCircles(Point point){
         ArrayList<Circle> circles = new ArrayList<Circle>();
