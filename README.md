@@ -71,11 +71,11 @@ A 3D array - the accumulator - is used to store information about potential circ
 
 Points from *points.ht.data* are being used.
 
-- Cirlces (x, y, r, number of points)
+- Circles (x, y, r, number of points)
   - 0, 0, 50, 50
   - 100, 140, 110, 50
   - 0, 50, 50, 50
   - 20, 100, 100, 100
-- Noice: 120 points randomly selected between -200 and 200
+- Noise: 120 points randomly selected between -200 and 200
 
 ![PS1](http://i.imgur.com/rYqX67O.png)
